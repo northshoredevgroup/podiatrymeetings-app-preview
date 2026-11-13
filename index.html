@@ -1,0 +1,958 @@
+<!doctype html><html><head><meta name="robots" content="noindex,nofollow"><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Podiatry Meetings App</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700;9..40,800;9..40,900&family=DM+Mono:wght@500&display=swap">
+<style>
+/* Layout: phone-shell app in PodiatryMeetings.com brand — magenta→plum gradient strip, stacked purple wordmark, blush surfaces, concentric-circle motif; fixed bottom tab bar. Sponsor slots are native parts of each screen. */
+:root{
+  --ink:#111827; --ink-2:#374151; --muted:#6B6475;
+  --bg:#FBF2F6; --surface:#FFFFFF; --line:#EAD9E4;
+  --brand:#503E78; --plum:#6F146C; --magenta:#D40258; --deep:#4A0C48;
+  --grad:linear-gradient(90deg,#D40258 0%,#6F146C 100%);
+  --accent:#D40258; --teal:#1B8787; --teal-soft:#DFEFEF; --live:#1B8787;
+  --ad:#F5ECF5; --ad-line:#E2C5D2; --on-grad:#FFFFFF;
+  --f-display:"Museo Sans","DM Sans", system-ui, sans-serif;
+  --f-body:"Museo Sans","DM Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono:"DM Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --ink:#F7EEF5; --ink-2:#DCCBD8; --muted:#A894A6;
+  --bg:#170B17; --surface:#24132A; --line:#3A2340;
+  --brand:#C9B8F0; --plum:#C46BC1; --magenta:#FF4D8F; --deep:#2A0F29;
+  --accent:#FF4D8F; --teal:#4FC1C1; --teal-soft:#123433; --live:#2FA3A3;
+  --ad:#2E1530; --ad-line:#5A2D55; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --ink:#F7EEF5; --ink-2:#DCCBD8; --muted:#A894A6;
+  --bg:#170B17; --surface:#24132A; --line:#3A2340;
+  --brand:#C9B8F0; --plum:#C46BC1; --magenta:#FF4D8F; --deep:#2A0F29;
+  --accent:#FF4D8F; --teal:#4FC1C1; --teal-soft:#123433; --live:#2FA3A3;
+  --ad:#2E1530; --ad-line:#5A2D55; color-scheme:dark }
+
+[hidden]{display:none!important}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.45}
+*{box-sizing:border-box}
+button{font:inherit;color:inherit}
+a{color:var(--teal)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:6px}
+
+.app{max-width:480px;margin:0 auto;min-height:100%;display:flex;flex-direction:column;background:var(--bg)}
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--surface);color:var(--ink);
+  border-bottom:1px solid var(--line);overflow:hidden}
+.strip{background:var(--grad);color:#fff;font-size:11.5px;padding:5px 16px}
+.strip b{font-weight:800}
+.brand{display:flex;align-items:center;gap:10px;position:relative;z-index:1;padding:10px 16px 12px}
+header.top::after{content:"";position:absolute;right:-70px;top:-40px;width:230px;height:230px;border-radius:50%;
+  background:repeating-radial-gradient(circle, transparent 0 18px, var(--line) 18px 19px);pointer-events:none;opacity:.8}
+.wordmark{font-family:var(--f-display);font-weight:900;color:var(--brand);line-height:.86;letter-spacing:-.02em;font-size:19px;margin:0}
+.wordmark span{display:block}
+.wordmark small{display:block;font-size:11px;font-weight:800;letter-spacing:0;margin-top:2px}
+.mark{width:44px;height:44px;border-radius:50%;background:var(--grad);display:grid;place-items:center;
+  font-family:var(--f-display);font-weight:900;color:#fff;font-size:15px;flex:none}
+.adtoggle{margin-left:auto;background:var(--surface);border:1.5px solid var(--plum);color:var(--plum);
+  border-radius:4px;padding:7px 11px;font-size:12px;font-weight:700;cursor:pointer;position:relative;z-index:1}
+.adtoggle[aria-pressed="true"]{background:var(--grad);color:#fff;border-color:transparent}
+
+main{flex:1;padding:16px 16px calc(96px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:16px}
+h2{font-family:var(--f-display);font-weight:800;font-size:22px;margin:0;letter-spacing:-.01em;text-wrap:balance}
+h3{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:0;font-weight:700}
+
+/* Sponsor slots */
+.slot{position:relative}
+.slot-tag{display:none;position:absolute;top:-9px;left:10px;z-index:2;background:var(--grad);color:#fff;
+  font-size:10.5px;font-weight:700;padding:2px 7px;border-radius:4px;letter-spacing:.03em}
+body.show-slots .slot{outline:2px dashed var(--accent);outline-offset:3px;border-radius:12px}
+body.show-slots .slot-tag{display:block}
+.presented{display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--line);
+  border-radius:12px;padding:10px 12px;font-size:13px;color:var(--muted)}
+.presented b{color:var(--ink)}
+.logo-ph{width:36px;height:36px;border-radius:8px;background:var(--ad);border:1px solid var(--ad-line);
+  display:grid;place-items:center;font-weight:800;font-family:var(--f-display);color:var(--ink-2);font-size:13px;flex:none}
+
+.search{display:flex;gap:8px}
+.search input{flex:1;min-width:0;border:1px solid var(--line);background:var(--surface);color:var(--ink);
+  border-radius:10px;padding:11px 12px;font:inherit}
+.chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none}
+.chip{flex:none;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:7px 12px;
+  font-size:13px;font-weight:600;cursor:pointer;color:var(--ink-2)}
+.chip[aria-pressed="true"]{background:var(--plum);color:#fff;border-color:var(--plum)}
+h2{color:var(--ink)}
+.date{background:var(--ad)!important}
+.date .d{color:var(--plum)}
+.badge.ce{background:var(--plum)!important}
+.cta{background:var(--grad)!important;color:#fff!important;border-radius:4px!important}
+.btn{border-radius:4px!important}
+.btn.primary{background:var(--grad)!important;color:#fff!important;border-color:transparent!important}
+.star.on{color:var(--magenta)!important}
+.save[aria-pressed="true"]{color:var(--magenta)!important}
+body.show-slots .slot{outline-color:var(--magenta)!important}
+.tab[aria-selected="true"] svg{color:var(--magenta)!important}
+:focus-visible{outline-color:var(--magenta)!important}
+
+.list{display:flex;flex-direction:column;gap:10px}
+.ev{display:grid;grid-template-columns:56px 1fr auto;gap:12px;align-items:start;background:var(--surface);
+  border:1px solid var(--line);border-radius:14px;padding:12px;cursor:pointer;text-align:left;width:100%}
+.date{border-radius:10px;background:var(--bg);text-align:center;padding:6px 0;font-family:var(--f-mono)}
+.date .m{font-size:10.5px;text-transform:uppercase;color:var(--muted);letter-spacing:.06em}
+.date .d{font-size:20px;font-weight:500;font-variant-numeric:tabular-nums;line-height:1.1}
+.ev-body{min-width:0}
+.ev-title{font-weight:700;font-size:15px;line-height:1.3}
+.ev-meta{font-size:13px;color:var(--muted);margin-top:2px}
+.badges{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.badge{font-size:11px;font-weight:700;padding:2px 7px;border-radius:999px;background:var(--bg);color:var(--ink-2)}
+.badge.live{background:var(--live);color:#fff}
+.badge.ce{background:var(--teal);color:#fff}
+.badge.intl{border:1px solid var(--line);background:transparent}
+.save{background:none;border:none;cursor:pointer;padding:4px;font-size:20px;line-height:1;color:var(--muted)}
+.save[aria-pressed="true"]{color:var(--accent)}
+
+.sponsored{background:var(--ad);border:1px solid var(--ad-line);border-radius:14px;padding:14px;display:flex;gap:12px;align-items:center}
+.sponsored .k{font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:700}
+.sponsored .t{font-weight:700;margin-top:2px}
+.sponsored .s{font-size:13px;color:var(--ink-2)}
+.cta{display:inline-block;margin-top:8px;background:var(--ink);color:var(--bg);border:none;border-radius:8px;
+  padding:7px 12px;font-size:13px;font-weight:700;cursor:pointer;text-decoration:none}
+
+.hero-card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:6px}
+.hero-card .num{font-family:var(--f-display);font-weight:900;color:var(--magenta);font-size:34px;line-height:1}
+.empty{text-align:center;color:var(--muted);padding:28px 12px;border:1px dashed var(--line);border-radius:14px}
+
+/* Detail sheet */
+.sheet{position:fixed;inset:0;z-index:20;background:rgba(5,15,20,.5);display:flex;align-items:flex-end;justify-content:center}
+.sheet-inner{background:var(--bg);width:100%;max-width:480px;max-height:92%;overflow:auto;border-radius:20px 20px 0 0;
+  padding:18px 16px calc(24px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:14px}
+.sheet-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.close{background:var(--surface);border:1px solid var(--line);border-radius:999px;width:34px;height:34px;cursor:pointer;flex:none}
+.facts{background:var(--surface);border:1px solid var(--line);border-radius:14px;display:grid}
+.fact{display:grid;grid-template-columns:90px 1fr;gap:10px;padding:10px 12px;border-top:1px solid var(--line);font-size:14px}
+.fact:first-child{border-top:none}
+.fact span:first-child{color:var(--muted);font-size:12.5px;text-transform:uppercase;letter-spacing:.06em;padding-top:2px}
+.fact span:last-child{min-width:0;overflow-wrap:anywhere}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.btn{border-radius:10px;padding:12px;font-weight:700;text-align:center;text-decoration:none;cursor:pointer;border:1px solid var(--line);background:var(--surface);color:var(--ink)}
+.btn.primary{background:var(--accent);color:#3A2700;border-color:var(--accent)}
+
+/* Rating */
+.stars{display:flex;gap:6px}
+.star{font-size:28px;background:none;border:none;cursor:pointer;color:var(--line);padding:0}
+.star.on{color:var(--accent)}
+select,textarea{width:100%;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:10px;padding:10px;font:inherit}
+.review{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px;font-size:14px}
+.review .who{font-size:12px;color:var(--muted);margin-top:6px}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(84px + env(safe-area-inset-bottom,0px));z-index:30;
+  background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:999px;font-weight:600;font-size:14px}
+
+.article{display:block;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px;text-decoration:none;color:var(--ink)}
+.article .d{font-family:var(--f-mono);font-size:11.5px;color:var(--muted)}
+.article .t{font-weight:700;margin-top:2px}
+.partners{display:flex;flex-wrap:wrap;gap:8px}
+.partners span{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:6px 10px;font-size:13px;font-weight:600;color:var(--ink-2)}
+
+nav.tabs{position:fixed;bottom:0;left:0;right:0;z-index:10;background:var(--surface);border-top:1px solid var(--line);
+  padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px))}
+nav.tabs div{max-width:480px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr)}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:3px;gap:3px}
+.seg button{border:none;background:none;border-radius:7px;padding:8px 4px;font-weight:700;font-size:13px;cursor:pointer;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--plum);color:#fff}
+.sum{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:6px;font-size:14px}
+.sum .row{display:flex;justify-content:space-between;gap:12px}
+.sum .row span:last-child,.money{font-family:var(--f-mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+.sum .tot{border-top:1px solid var(--line);padding-top:8px;font-weight:800;font-size:15px}
+.sum .tot span:last-child{color:var(--magenta)}
+.slotcard{display:grid;grid-template-columns:38px 1fr auto;gap:12px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px}
+.slotcard .L{width:38px;height:38px;border-radius:8px;background:var(--grad);color:#fff;display:grid;place-items:center;font-weight:900;font-size:16px}
+.slotcard .nm{font-weight:700;font-size:14.5px;line-height:1.3}
+.buy{text-decoration:none;display:inline-block;border:1.5px solid var(--plum);color:var(--plum);background:var(--surface);border-radius:4px;padding:7px 12px;font-weight:700;cursor:pointer;font-size:13px}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px}
+.kpi .v{font-family:var(--f-mono);font-size:18px;font-weight:500;color:var(--plum);font-variant-numeric:tabular-nums}
+.kpi .k{font-size:11.5px;color:var(--muted);font-weight:600}
+.bars{display:flex;flex-direction:column;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px}
+.bar{display:grid;grid-template-columns:110px 1fr 70px;gap:8px;align-items:center;font-size:13px}
+.bar .track{height:10px;background:var(--ad);border-radius:5px;overflow:hidden}
+.bar .fill{height:100%;background:var(--grad);border-radius:5px}
+.bar .money{text-align:right}
+.tbl{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:12px}
+.tbl table{border-collapse:collapse;width:100%;font-size:12.5px;min-width:520px}
+.tbl th,.tbl td{text-align:left;padding:8px 10px;border-top:1px solid var(--line);white-space:nowrap}
+.tbl th{border-top:none;color:var(--muted);font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.06em}
+.tbl td.money{text-align:right}
+.pricegrid{display:grid;grid-template-columns:1fr 92px;gap:6px 10px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px;font-size:13.5px}
+.pricegrid input{width:100%;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:8px;padding:6px 8px;font:inherit;font-family:var(--f-mono);text-align:right}
+.pricegrid h4{grid-column:1/-1;margin:6px 0 0;font-size:12px;text-transform:uppercase;letter-spacing:.07em;color:var(--plum)}
+.status{font-size:11px;font-weight:700;padding:2px 7px;border-radius:999px;background:var(--teal-soft);color:var(--teal)}
+.paid{display:grid;place-items:center;width:56px;height:56px;border-radius:50%;background:var(--grad);color:#fff;font-size:28px;margin:4px auto 0}
+.radios{display:grid;gap:6px}
+.radios label{display:flex;gap:8px;align-items:center;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:10px;font-size:14px;cursor:pointer}
+.radios label:has(input:checked){border-color:var(--magenta);background:var(--ad)}
+.seg2{grid-template-columns:1fr 1fr}
+.calhead{display:flex;justify-content:space-between;align-items:center}
+.calhead b{font-family:var(--f-display);font-size:17px}
+.calnav{width:36px;height:36px;border-radius:999px;border:1px solid var(--line);background:var(--surface);cursor:pointer;font-size:16px}
+.cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:8px}
+.cal .dow{text-align:center;font-size:11px;font-weight:700;color:var(--muted);padding:2px 0 4px}
+.cday{aspect-ratio:1/1;max-width:100%;border:none;border-radius:9px;background:transparent;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-family:var(--f-mono);font-size:13px;font-variant-numeric:tabular-nums;color:var(--ink)}
+.cday.out{visibility:hidden}
+.cday.has{background:var(--ad)}
+.cday.today{outline:1.5px solid var(--plum);outline-offset:-1.5px}
+.cday[aria-pressed="true"]{background:var(--grad);color:#fff}
+.dots{display:flex;gap:2px;height:5px}
+.dots i{width:5px;height:5px;border-radius:50%;background:var(--magenta)}
+.cday[aria-pressed="true"] .dots i{background:#fff}
+.sync{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--muted)}
+.sync i{width:8px;height:8px;border-radius:50%;background:var(--live);flex:none}
+.badge.virt{background:var(--teal-soft);color:var(--teal)}
+.player{position:relative;aspect-ratio:16/9;max-width:100%;border-radius:14px;overflow:hidden;color:#fff;display:grid;place-items:center;
+  background:radial-gradient(circle at 70% 30%,rgba(255,255,255,.12) 0 18%,transparent 19%),repeating-radial-gradient(circle at 70% 30%,transparent 0 22px,rgba(255,255,255,.07) 22px 23px),linear-gradient(135deg,#4A0C48,#6F146C 55%,#D40258)}
+.player .play{width:60px;height:60px;border-radius:50%;background:rgba(255,255,255,.18);display:grid;place-items:center;font-size:24px;border:none;color:#fff;cursor:pointer}
+.player .pb{position:absolute;top:10px;left:10px;font-size:11px;font-weight:800;letter-spacing:.06em;padding:3px 8px;border-radius:4px;background:#D40258;color:#fff}
+.player .pb.rec{background:rgba(0,0,0,.45)}
+.player .ps{position:absolute;top:10px;right:10px;font-size:11.5px;background:rgba(0,0,0,.35);padding:3px 8px;border-radius:4px;color:#fff}
+.player .pcap{position:absolute;bottom:10px;left:12px;right:12px;font-size:12.5px;opacity:.9;color:#fff}
+.sheet-inner > *{flex-shrink:0}
+.player > .slot{position:absolute;left:10px;right:10px;bottom:10px}
+.preroll{background:rgba(255,255,255,.95);color:#111827;border-radius:10px;padding:8px 10px;font-size:12.5px;display:flex;justify-content:space-between;gap:8px;align-items:center}
+.qa{display:grid;grid-template-columns:44px 1fr;gap:10px;align-items:start;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px}
+.up{border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:4px 0;cursor:pointer;font-family:var(--f-mono);font-size:12px;color:var(--ink);display:flex;flex-direction:column;align-items:center}
+.up[aria-pressed="true"]{border-color:var(--magenta);color:var(--magenta)}
+.inline-form{display:flex;gap:8px}
+.inline-form input{flex:1;min-width:0;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:10px;padding:10px;font:inherit}
+.vote{display:block;width:100%;text-align:left;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:10px 12px;cursor:pointer;font-weight:600;color:var(--ink);position:relative;overflow:hidden}
+.vote .fillbar{position:absolute;inset:0 auto 0 0;background:var(--ad);z-index:0}
+.vote span{position:relative;z-index:1;display:flex;justify-content:space-between;gap:8px}
+.vote[aria-pressed="true"]{border-color:var(--magenta)}
+.chatline{font-size:14px}.chatline b{color:var(--plum)}
+.leadbox{background:var(--ad);border:1px solid var(--ad-line);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:8px;font-size:13.5px}
+.prem{border:1px dashed var(--magenta);border-radius:10px;padding:10px 12px 12px;display:flex;flex-direction:column;gap:10px;margin:0;min-width:0}
+.prem legend{font-size:12px;font-weight:700;color:var(--magenta);padding:0 4px}
+.prem:disabled{opacity:.5;border-color:var(--line)}
+.prem:disabled legend{color:var(--muted)}
+.prem input{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:10px;padding:10px;font:inherit;min-width:0}
+.tab{background:none;border:none;cursor:pointer;padding:6px 2px;font-size:11.5px;font-weight:600;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:3px}
+.tab svg{width:22px;height:22px}
+.tab[aria-selected="true"]{color:var(--ink)}
+.tab[aria-selected="true"] svg{color:var(--teal)}
+.note{font-size:12.5px;color:var(--muted)}
+.board-head{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}
+.post{display:flex;flex-direction:column;gap:4px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px;cursor:pointer;text-align:left;width:100%}
+.post.feat{border:1.5px solid var(--magenta);box-shadow:0 2px 10px rgba(212,2,88,.08)}
+.post-top{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.post-title{font-weight:700;font-size:15px;line-height:1.3;min-width:0}
+.price{font-family:var(--f-mono);font-weight:500;color:var(--plum);white-space:nowrap;font-variant-numeric:tabular-nums}
+.badge.feat{background:var(--grad);color:#fff}
+.newbtn{border:none;border-radius:4px;background:var(--grad);color:#fff;font-weight:700;padding:9px 14px;cursor:pointer;font-size:13.5px}
+.field{display:flex;flex-direction:column;gap:4px}
+.field input{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:10px;padding:10px;font:inherit}
+.tier{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tier label{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:10px;cursor:pointer;font-size:13px;display:flex;gap:8px;align-items:flex-start}
+.tier label:has(input:checked){border-color:var(--magenta);background:var(--ad)}
+.tier b{display:block;font-size:14px}
+@media (prefers-reduced-motion:no-preference){.sheet-inner{animation:up .22s ease-out}@keyframes up{from{transform:translateY(30px);opacity:.6}}}
+</style>
+
+<div class="app">
+  <header class="top">
+    <div class="strip"><b>Podiatry Meetings</b> | Podiatric meetings are our jam.</div>
+    <div class="brand">
+      <h1 class="wordmark" aria-label="PodiatryMeetings.com"><span>Podiatry</span><span>Meetings</span><small>.com</small></h1>
+      <button class="adtoggle" id="adToggle" aria-pressed="false" title="Outline every sellable sponsor placement">Ad slots</button>
+    </div>
+  </header>
+  <main id="view"></main>
+</div>
+
+<nav class="tabs" aria-label="Sections"><div role="tablist">
+  <button class="tab" role="tab" data-tab="meetings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Meetings</button>
+  <button class="tab" role="tab" data-tab="jobs"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2M3 13h18"/></svg>Jobs</button>
+  <button class="tab" role="tab" data-tab="gear"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.6 13.4l-7.2 7.2a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg>Equipment</button>
+  <button class="tab" role="tab" data-tab="more"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M10 8l4 2-4 2z"/><path d="M8 20h8"/></svg>Learn</button>
+  <button class="tab" role="tab" data-tab="account"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4"/></svg>Advertise</button>
+</div></nav>
+
+<div id="sheet" class="sheet" hidden><div class="sheet-inner" id="sheetInner" role="dialog" aria-modal="true"></div></div>
+<div id="toast" class="toast" hidden></div>
+
+<script>
+// Snapshot of the PodiatryMeetings.com calendar via its public events feed, pulled 2026-11-13. The live app syncs this automatically.
+const EVENTS=[{"id": 36045, "t": "AENS Fundamental Peripheral Nerve Course and Symposium", "s": "2026-11-13", "e": "2026-11-15", "city": "Duck Key", "st": "FL", "venue": "Hawks Cay Resort", "org": "AENS", "web": "https://www.aens.us/aens/Training__Conferences.asp", "ce": "Up to 26 CME offered", "url": "https://podiatrymeetings.com/event/aens-nerve-fl/", "cech": 26},
+ {"id": 37082, "t": "Advanced Principles of Foot and Ankle Trauma Surgery", "s": "2026-11-13", "e": "2026-11-14", "city": "Bellevue", "st": "WA", "venue": "Hyatt Regency Bellevue", "org": "ACFAS", "web": "https://www.acfas.org/advancedprinciples-nov2026", "ce": "CECH: CECH information not yet available (as of 5/24/26)", "url": "https://podiatrymeetings.com/event/advanced-principles-of-foot-and-ankle-trauma-surgery-bellvue-wa/"},
+ {"id": 36656, "t": "OFAMA Wound Care Seminar", "s": "2026-11-14", "e": "2026-11-14", "city": "Columbus", "st": "OH", "venue": "Embassy Suites Columbus – Airport", "org": "Ohio FAMA", "web": "https://ohfama.org/aws/OHFAMA/pt/sp/seminar", "ce": "CECH: Up to 6 CECH available", "url": "https://podiatrymeetings.com/event/ofama-wound-care-seminar/", "cech": 6},
+ {"id": 36108, "t": "Kent State – Southeast National Conference", "s": "2026-11-19", "e": "2026-11-22", "city": "Orlando", "st": "FL", "venue": "Walt Disney World Swan Hotel", "org": "Kent State", "web": "https://www.kent.edu/cpm/SNC", "ce": "CECH: Up to 25 CECH available", "url": "https://podiatrymeetings.com/event/kent-state-southeast-national-conference-orlando-fl/", "cech": 25},
+ {"id": 36014, "t": "Royal College of Podiatry Annual Conference and Exhibition", "s": "2026-11-26", "e": "2026-11-28", "city": "Birmingham", "st": "UK", "venue": "The International Convention Centre", "org": "The Royal College of Podiatry", "web": "https://rcpod.org.uk/events-and-courses/conferences-and-events", "ce": "CECH: CECH information not yet available (as of 5/20/25)", "url": "https://podiatrymeetings.com/event/royal-college-of-podiatry-annual-conference-and-exhibition-birmingham-england/", "intl": true},
+ {"id": 37446, "t": "Indiana PMA Virtual Learning Series", "s": "2026-12-01", "e": "2026-12-01", "city": "Online", "st": "Virtual", "org": "IPMA", "web": "https://indianapodiatric.org/virtual-learning-series/", "ce": "Up to 6 hours of CECH available through the series.", "url": "https://podiatrymeetings.com/event/indiana-pma-virtual-learning-series-virtual/", "cech": 6, "virt": true},
+ {"id": 35888, "t": "OSET Orthopaedic Summit", "s": "2026-12-02", "e": "2026-12-05", "city": "Las Vegas", "st": "NV", "venue": "The Fountainebleau Las Vegas", "org": "OSET", "web": "https://orthosummit.com", "ce": "CECH: CECH information not yet available (as of 5/24/26)", "url": "https://podiatrymeetings.com/event/oset-orthopaedic-summit-las-vegas-nv-2/"},
+ {"id": 36539, "t": "PI Cadaver Course", "s": "2026-12-03", "e": "2026-12-05", "city": "Decatur", "st": "GA", "venue": "Podiatry Institute Learning Center", "org": "Podiatry Institute (PI)", "web": "https://podiatryinstitute.com/cadaver_course/surgerycourses.html", "ce": "CECH: Up to 25 CECH available", "url": "https://podiatrymeetings.com/event/pi-cadaver-course-decatur-ga-3/", "cech": 25},
+ {"id": 36105, "t": "Goldfarb Virtual December Meeting", "s": "2026-12-04", "e": "2026-12-05", "city": "Online", "st": "Virtual", "org": "Goldfarb Foundation", "web": "https://www.goldfarbfoundation.org", "ce": "CECH: Up to 8 CECH available", "url": "https://podiatrymeetings.com/event/goldfarb-virtual-december-meeting-virtual-2/", "cech": 8, "virt": true},
+ {"id": 36392, "t": "Advanced MIS Private Cadaver Workshop", "s": "2026-12-04", "e": "2026-12-05", "city": "Glenview", "st": "IL", "venue": "TJ Ahn HQ & Training Center", "org": "TJ Ahn/International MIFAS", "web": "https://drtjahn.com/live-events/", "ce": "CECH: Up to 13 CECH available", "url": "https://podiatrymeetings.com/event/advanced-mis-private-cadaver-workshop-glenview-il-2/", "cech": 13},
+ {"id": 36660, "t": "Connecticut PMA Annual Symposium", "s": "2026-12-04", "e": "2026-12-05", "city": "Westbrook", "st": "CT", "venue": "Water’s Edge Resort & Spa", "org": "Connecticut PMA", "web": "https://cpma.org/event/symposium26/", "ce": "CECH: CECH information not yet available (as of 5/24/26)", "url": "https://podiatrymeetings.com/event/connecticut-pma-annual-symposium-westbrook-ct/"},
+ {"id": 36111, "t": "PRESENT Desert Foot", "s": "2026-12-09", "e": "2026-12-12", "city": "Phoenix", "st": "AZ", "venue": "Sheraton Phoenix Downtown", "ce": "CECH: CECH information not yet available (as of 5/24/26)", "url": "https://podiatrymeetings.com/event/desert-foot-phoenix-az-2/"},
+ {"id": 35384, "t": "EFAS Hindfoot", "s": "2026-12-10", "e": "2026-12-11", "city": "Augsburg", "st": "Germany", "org": "EFAS", "web": "https://www.efas.net/members/events", "ce": "CME information not available", "url": "https://podiatrymeetings.com/event/efas-hindfoot-augsburg-germany-2/", "intl": true},
+ {"id": 35864, "t": "IFAF Asia Cruise Seminar", "s": "2027-01-13", "e": "2027-01-26", "city": "At sea", "st": "Asia", "intl": true, "venue": "Celebrity Solstice", "org": "IFAF", "web": "https://www.internationalfootankle.org/scientific-seminars/", "ce": "Up to 25 CECH available", "url": "https://podiatrymeetings.com/event/ifaf-asia-cruise-seminar-asia/", "cech": 25},
+ {"id": 35197, "t": "NCFAS Winter Scientific Seminar", "s": "2027-01-14", "e": "2027-01-17", "city": "Greensboro", "st": "NC", "venue": "Grandover Resort & Spa", "org": "NCFAS", "web": "https://ncfootandankle.org/society-meetings/", "ce": "Up to 25 CECH available", "url": "https://podiatrymeetings.com/event/ncfas-winter-scientific-seminar-greensboro-nc-2/", "cech": 25},
+ {"id": 37658, "t": "Idaho PMA Mountain Foot + Ankle Conference", "s": "2027-01-14", "e": "2027-01-16", "city": "Ketchum", "st": "ID", "venue": "Limelight Hotel", "org": "Idaho Podiatric Medical Association", "web": "https://idahopodiatrists.org/the-mountain-conference/", "ce": "Up to 15 CME available", "url": "https://podiatrymeetings.com/event/idaho-mountain-conference/", "cech": 15},
+ {"id": 37373, "t": "ACPM Webinar Series: Excellence in Hindfoot Surgery", "s": "2027-01-20", "e": "2027-01-20", "city": "Online", "st": "Virtual", "venue": "Virtual", "org": "ACPM", "web": "https://www.acpmed.org/meetings/meetings.php", "ce": "Excellence in Hindfoot Surgery: Evolution & Progression of Pes Plan Valgus Foot Deformity ", "url": "https://podiatrymeetings.com/event/acpm-fall-mini-conference-biomechanics-the-foundation-of-every-step-in-practice-virtual/", "virt": true},
+ {"id": 37448, "t": "Indiana PMA Virtual Learning Series", "s": "2027-01-20", "e": "2027-01-20", "city": "Online", "st": "Virtual", "org": "IPMA", "web": "https://indianapodiatric.org/virtual-learning-series/", "ce": "Up to 6 hours of CECH available through the series.", "url": "https://podiatrymeetings.com/event/indiana-pma-virtual-learning-series-virtual-2/", "cech": 6, "virt": true},
+ {"id": 32856, "t": "NYSPMA Clinical Conference", "s": "2027-01-22", "e": "2027-01-25", "city": "New York", "st": "NY", "venue": "New York Marriott Marquis", "org": "NYSPMA", "web": "https://www.nyspma.org/aws/NYSPMA/pt/sp/conference_home_page", "ce": "Up to 29.5 CECH", "url": "https://podiatrymeetings.com/event/nyspma-clinical-conference-new-york-ny-2/", "cech": 29.5},
+ {"id": 36988, "t": "FPMA Science and Medical Symposium (SAM)", "s": "2027-01-27", "e": "2027-01-31", "city": "Orlando", "st": "FL", "venue": "Hyatt Regency Orlando", "org": "FPMA", "web": "fpma.com/sam", "ce": "Physician, assistant, and exhibitor/sponsor registration is now open. In 2027, FPMA is cel", "url": "https://podiatrymeetings.com/event/fpma-science-and-medical-symposium-sam-orlando-fl/"},
+ {"id": 32456, "t": "Free Market Medical Association Annual Meeting", "s": "2027-02-03", "e": "2027-02-05", "city": "Oklahoma City", "st": "OK", "venue": "Omni Oklahoma City", "org": "FMMA", "web": "https://fmma.org/annual-conference/", "ce": "CECH information not available", "url": "https://podiatrymeetings.com/event/free-market-medical-association-annual-meeting-oklahoma-city-ok/"},
+ {"id": 35847, "t": "Free Market Medical Association Annual Meeting", "s": "2027-02-03", "e": "2027-02-05", "city": "Oklahoma City", "st": "OK", "venue": "Omni Oklahoma City", "org": "FMMA", "web": "https://fmma.org/annual-conference/", "ce": "CECH: CECH information not yet available (as of 5/24/26)", "url": "https://podiatrymeetings.com/event/free-market-medical-association-annual-meeting-oklahoma-city-ok-2/"},
+ {"id": 5177, "t": "Podiatry Institute Cutting Edge Topics and Techniques in Foot and Ankle Surgery", "s": "2027-02-04", "e": "2027-02-06", "city": "Park City", "st": "UT", "venue": "Sheraton Park City", "org": "Podiatry Institute (PI)", "web": "https://www.podiatryinstitute.com/2027-seminars", "ce": "Up to 20 CECH available", "url": "https://podiatrymeetings.com/event/podiatry-institute-park-city-ut/", "cech": 20},
+ {"id": 35205, "t": "EFAS Forefoot Course and Hindfoot Deformities in Relation with Foot Pathologies", "s": "2027-02-04", "e": "2027-02-05", "city": "Barcelona", "st": "Spain", "venue": "School of Medicine, University of Barcelona", "org": "EFAS", "web": "https://www.efas.net/events", "ce": "CECH information not available", "url": "https://podiatrymeetings.com/event/efas-course-and-hindfoot-deformities-in-realtion-with-foot-pathologies-barcelona-spain/", "intl": true},
+ {"id": 35211, "t": "IFAF Annual Lake Tahoe Ski Seminar", "s": "2027-02-04", "e": "2027-02-06", "city": "South Lake Tahoe", "st": "CA", "venue": "Margaritaville Resort Lake Tahoe", "org": "IFAF", "web": "https://www.internationalfootankle.org/", "ce": "Up to 20 CECH available", "url": "https://podiatrymeetings.com/event/ifaf-annual-lake-tahoe-ski-seminar-south-lake-tahoe-ca/", "cech": 20},
+ {"id": 35213, "t": "Goldfarb Foundation Virtual Winter Meeting", "s": "2027-02-05", "e": "2027-02-06", "city": "Online", "st": "Virtual", "org": "Goldfarb Foundation", "web": "https://www.goldfarbfoundation.org/CME-Meetings", "ce": "Up to 8 CECH available", "url": "https://podiatrymeetings.com/event/goldfarb-foundation-virtual-winter-meeting-virtual/", "cech": 8, "virt": true},
+ {"id": 32469, "t": "AAPSM 4th Annual Biomechanics Summit", "s": "2027-02-06", "e": "2027-02-06", "city": "Online", "st": "Virtual", "org": "AAPSM", "web": "https://member.aapsm.org/6th-annual-virtual-biomechanics-summit/", "ce": "Location : Virtual CECH : Information not yet available Reviews: Have you attended or exhi", "url": "https://podiatrymeetings.com/event/aapsm-4th-annual-biomechanics-summit-virtual/", "virt": true},
+ {"id": 37450, "t": "Indiana PMA Virtual Learning Series", "s": "2027-02-11", "e": "2027-02-11", "city": "Online", "st": "Virtual", "org": "IPMA", "web": "https://indianapodiatric.org/virtual-learning-series/", "ce": "Up to 6 hours of CECH available through the series.", "url": "https://podiatrymeetings.com/event/indiana-pma-virtual-learning-series-virtual-4/", "cech": 6, "virt": true},
+ {"id": 40260, "t": "AOFAS Winter Meeting", "s": "2027-02-11", "e": "2027-02-13", "city": "Orlando", "st": "FL", "venue": "Walt Disney World Swan Hotel", "org": "AOFAS", "web": "https://www.aofas.org/education/meetings-courses/winter-meeting", "ce": "Up to 15.75 CME offered", "url": "https://podiatrymeetings.com/event/aofas-winter-meeting-orlando-fl-2/", "cech": 15.75},
+ {"id": 32861, "t": "FAPA Seminar In The Sun", "s": "2027-02-13", "e": "2027-02-16", "city": "Punta Cana", "st": "Dominican Republic", "venue": "JOIA Bávaro Conference Center", "org": "FAPA Fraternal", "web": "https://beachtravel.com/fapa-2027/", "ce": "Up to 16 CECH available", "url": "https://podiatrymeetings.com/event/fapa/", "cech": 16, "intl": true},
+ {"id": 35280, "t": "GPMA Georgia Foot & Ankle Summit", "s": "2027-02-18", "e": "2027-02-20", "city": "Atlanta", "st": "GA", "venue": "Intercontinental Buckhead Atlanta Hotel", "org": "Georgia Podiatric Medical Association", "web": "https://www.gapma.com/georgia-foot-ankle-summit", "ce": "Up to 25 CECH available", "url": "https://podiatrymeetings.com/event/gpma-georgia-foot-ankle-summit-atlanta-ga/", "cech": 25},
+ {"id": 37480, "t": "NPIAP Annual Conference", "s": "2027-02-18", "e": "2027-02-19", "city": "Indianapolis", "st": "IN", "venue": "JW Marriott Indianapolis", "org": "NPIAP", "web": "https://npiap.com/page/AnnualConference", "ce": "CECH information not available", "url": "https://podiatrymeetings.com/event/npiap-2026-annual-conference-indianapolis-in/"},
+ {"id": 32886, "t": "PRESENT Superbones Superwounds Winter Virtual Conference", "s": "2027-02-20", "e": "2027-02-20", "city": "Online", "st": "Virtual", "org": "PRESENT e-Learning Systems", "web": "https://www.podiatry.com/Lecture-Hall/package/77/Superbones-Superwounds-Winter", "ce": "Up to 8 CECH available", "url": "https://podiatrymeetings.com/event/present-treasure-hunt-los-angeles-ca-2/", "cech": 8, "virt": true},
+ {"id": 40176, "t": "ACPM Webinar Series: Excellence in Sports Medicine", "s": "2027-02-24", "e": "2027-02-24", "city": "Online", "st": "Virtual", "venue": "Virtual", "org": "ACPM", "web": "https://www.acpmed.org/meetings/meetings.php", "ce": "Excellence in Sports Medicine: Updates in Management of the High-Level Athlete", "url": "https://podiatrymeetings.com/event/acpm-webinar-series-excellence-in-sports-medicine-virtual/", "virt": true},
+ {"id": 18052, "t": "NCAPM No Nonsense", "s": "2027-02-26", "e": "2027-02-28", "city": "Online", "st": "Virtual", "org": "NCAPM", "web": "https://www.no-nonsense-seminar.com/", "ce": "Up to 25 CECH Available", "url": "https://podiatrymeetings.com/event/ncapm-no-nonsense-virtual/", "cech": 25, "virt": true},
+ {"id": 37478, "t": "ACPPS Regenerative Medicine Summit", "s": "2027-02-26", "e": "2027-02-28", "city": "Austin", "st": "TX", "org": "ACPPS", "web": "https://americancollegepps.com/events", "ce": "The Future of Podiatric Medicine Starts Here The premier podiatric regenerative medicine e", "url": "https://podiatrymeetings.com/event/acpps-regenerative-medicine-summit-austin-tx/"},
+ {"id": 35233, "t": "PRESENT Treasure Hunt", "s": "2027-02-27", "e": "2027-02-28", "city": "Los Angeles", "st": "CA", "venue": "Hotel Indigo Los Angeles Downtown", "org": "PRESENT e-Learning Systems", "web": "https://www.podiatry.com/Podiatry-CME-Conferences", "ce": "Up to 12 CECH available", "url": "https://podiatrymeetings.com/event/present-treasure-hunt-los-angeles-ca-3/", "cech": 12},
+ {"id": 32829, "t": "The Foot & Ankle Show", "s": "2027-03-02", "e": "2027-03-03", "city": "Liverpool", "st": "England", "venue": "Exhibition  Centre Liverpool", "org": "The Foot and Ankle Show", "web": "https://www.footandankleshow.com", "ce": "CECH information not yet available", "url": "https://podiatrymeetings.com/event/the-foot-ankle-show-liverpool-uk/", "intl": true},
+ {"id": 36990, "t": "Midwest Foot and Ankle Conference", "s": "2027-03-04", "e": "2027-03-07", "city": "Chicago", "st": "IL", "venue": "Chicago Marriott Downtown Magnificent Mile", "org": "ASPMA", "web": "https://themidwestfac.org/futuredates/", "ce": "Up to 30.25 CECH available", "url": "https://podiatrymeetings.com/event/midwest-foot-and-ankle-conference-chicago-il/", "cech": 30.25},
+ {"id": 38595, "t": "CAMPs + Regenerative Wound Care Summit", "s": "2027-03-05", "e": "2027-03-06", "city": "Fort Lauderdale", "st": "FL", "venue": "Marriott Harbor Beach Resort", "org": "Journal of Wound Care", "web": "https://campswoundcaresummit.com/camps2027/en/page/home", "ce": "Up to 10 CME credits", "url": "https://podiatrymeetings.com/event/camps-regenerative-wound-care-summit-fort-lauderdale-fl/", "cech": 10},
+ {"id": 36370, "t": "AOSSM Specialty Day", "s": "2027-03-06", "e": "2027-03-06", "city": "Las Vegas", "st": "NV", "venue": "The Venetian", "org": "AOSSM", "web": "https://sd2027.eventscribe.net/index.asp", "ce": "Up to 6.75 CECH available", "url": "https://podiatrymeetings.com/event/specialty-day-2026-new-orleans-la/", "cech": 6.75},
+ {"id": 32866, "t": "ACFAS Annual Scientific Conference", "s": "2027-03-11", "e": "2027-03-14", "city": "Orlando", "st": "FL", "venue": "Orange County Convention Center", "org": "ACFAS", "web": "https://www.acfas.org/education-professional-development/educationcalendar", "ce": "Up to 33.5 CECH avaliable", "url": "https://podiatrymeetings.com/event/acfas-annual-conference-orlando-fl/", "cech": 33.5},
+ {"id": 35228, "t": "EFAS Sports and Arthroscopy Course", "s": "2027-03-19", "e": "2027-03-20", "city": "Istanbul", "st": "Turkey", "org": "EFAS", "web": "https://www.efas.net/events", "ce": "CME information not available", "url": "https://podiatrymeetings.com/event/efas-sports-and-arthroscopy-course-vienna-austria/", "intl": true},
+ {"id": 40178, "t": "ACPM Webinar Series: Excellence in Complication Management", "s": "2027-03-25", "e": "2027-03-25", "city": "Online", "st": "Virtual", "venue": "Virtual", "org": "ACPM", "web": "https://www.acpmed.org/meetings/meetings.php", "ce": "Excellence in Complication Management", "url": "https://podiatrymeetings.com/event/acpm-webinar-series-excellence-in-complication-management-virtual/", "virt": true},
+ {"id": 35278, "t": "EFAS Ankle Degenerative Arthritis", "s": "2027-04-01", "e": "2027-04-02", "city": "Copenhagen", "st": "Denmark", "venue": "University of Copenhagen", "org": "EFAS", "web": "https://www.efas.net/events", "ce": "CME information not available", "url": "https://podiatrymeetings.com/event/efas-ankle-degenerative-arthritis-copenhagen-denmark/", "intl": true},
+ {"id": 31936, "t": "ACPM Annual Meeting", "s": "2027-04-02", "e": "2027-04-03", "city": "San Francisco", "st": "CA", "venue": "Hyatt Regency San Francisco", "org": "ACPM", "web": "https://www.acpmed.org/meetings/meetings.php", "ce": "Up to 14 CECH available Reviews: Have you attended or exhibited at this event? Click here ", "url": "https://podiatrymeetings.com/event/acpm-annual-meeting-san-antonio-tx/", "cech": 14},
+ {"id": 35254, "t": "Podiatry Institute Valley of the Sun Conference", "s": "2027-04-08", "e": "2027-04-11", "city": "Tempe", "st": "AZ", "venue": "Marriott Phoenix Tempe at the Buttes", "org": "Podiatry Institute (PI)", "web": "https://www.podiatryinstitute.com/2027-seminars", "ce": "Up to 25 CECH available", "url": "https://podiatrymeetings.com/event/podiatry-institute-valley-of-the-sun-conference-phoenix-az/", "cech": 25},
+ {"id": 32874, "t": "KPMA Annual Scientific Conference", "s": "2027-04-16", "e": "2027-04-18", "city": "Covington", "st": "KY", "venue": "Cincinnati Marriott at RiverCenter", "org": "KPMA", "web": "https://www.kypma.org/site_home.cfm", "ce": "Up to 20 CECH available", "url": "https://podiatrymeetings.com/event/kpma-annual-scientific-conference-louisville-ky/", "cech": 20},
+ {"id": 35264, "t": "EFAS Instructional Course", "s": "2027-04-16", "e": "2027-04-17", "city": "Lisboa", "st": "Poland", "venue": "Jupiter Lisboa Hotel", "org": "EFAS", "web": "https://www.efas.net/events", "ce": "CME information not available", "url": "https://podiatrymeetings.com/event/efas-instructional-course-lisbon-portugal/", "intl": true},
+ {"id": 40185, "t": "EFAS Complex Deformities and Complications In Foot & Ankle Surgery", "s": "2027-04-16", "e": "2027-04-17", "city": "Basel", "st": "Switzerland", "org": "EFAS", "web": "https://www.efas.net/events", "ce": "CME information not available", "url": "https://podiatrymeetings.com/event/efas-complex-deformities-and-complications-in-foot-ankle-surgery-basel-switzerland/", "intl": true},
+ {"id": 6757, "t": "OFAMA: Annual Ohio Foot and Ankle Scientific Seminar", "s": "2027-04-17", "e": "2027-04-17", "city": "Online", "st": "Virtual", "org": "Ohio FAMA", "web": "https://www.ohfama.org/aws/OHFAMA/pt/sp/conference_home_page", "ce": "Location: Online Event CECH: Up to 8 CECH Available Reviews: Have you attended or exhibite", "url": "https://podiatrymeetings.com/event/ohio-foot-ankle-scientific-seminar-virtual/", "cech": 8, "virt": true},
+ {"id": 35260, "t": "Podiatry Institute Surgical Pearls by the Sea", "s": "2027-04-22", "e": "2027-04-25", "city": "Newport", "st": "RI", "venue": "Newport Marriott", "org": "Podiatry Institute (PI)", "web": "https://www.podiatryinstitute.com/2027-seminars", "ce": "Up to 25 CECH available", "url": "https://podiatrymeetings.com/event/podiatry-institute-surgical-pearls-by-the-sea-newport-ri/", "cech": 25},
+ {"id": 32559, "t": "AMIFAS Annual MIS Cadaver Lab Seminar", "s": "2027-04-26", "e": "2027-04-28", "city": "Charlotte", "st": "NC", "venue": "IRCAD North America", "org": "AMIFAS", "web": "https://www.amifasintl.org/events/", "url": "https://podiatrymeetings.com/event/amifas-mis-cadaver-lab-orlando-fl-2/"},
+ {"id": 28984, "t": "Highlands Foot + Ankle Institute", "s": "2027-04-28", "e": "2027-05-02", "city": "Cabo San Lucas", "st": "Mexico", "venue": "Pueblo Bonito Los Cabos", "org": "Highlands Foot & Ankle Institute", "web": "https://www.highlandsfootandankleinstitute.org/conference", "ce": "Up to 16 CECH available.", "url": "https://podiatrymeetings.com/event/highlands-cabo/", "cech": 16, "intl": true},
+ {"id": 35394, "t": "SAWC Spring", "s": "2027-04-28", "e": "2027-05-02", "city": "Philadelphia", "st": "PA", "venue": "Philadelphia Convention Center", "org": "SAWC", "web": "https://woundheal.org/Meeting/Archives/", "ce": "Up to 25+ CECH available.", "url": "https://podiatrymeetings.com/event/sawc-spring-whs-annual-meeting-philadelphia-pa/"},
+ {"id": 35262, "t": "Ontario Society of Chiropodists Conference", "s": "2027-04-30", "e": "2027-05-01", "city": "Richmond Hill", "st": "ON", "venue": "Sheraton Parkway Toronto North", "org": "Ontario Society of Chiropodists", "web": "https://www.ontariochiropodist.com/cgi/page.cgi/_evtcal.html?evt=75", "ce": "Up to 24 CECH available", "url": "https://podiatrymeetings.com/event/ontario-society-of-chiropodists-conference-on/", "cech": 24, "intl": true},
+ {"id": 35235, "t": "IFAF: Seattle Lower Extremity Surgical Symposium (SLESS)", "s": "2027-05-05", "e": "2027-05-08", "city": "Seattle", "st": "WA", "venue": "Cedarbrook Lodge", "org": "IFAF", "web": "https://www.internationalfootankle.org/scientific-seminars/seattle-lower-extremity-surgery-symposium/", "ce": "Up to 33 CECH Available", "url": "https://podiatrymeetings.com/event/ifaf-seattle-lower-extremity-surgical-symposium-sless-seattle-wa/", "cech": 33},
+ {"id": 24949, "t": "OFAMA: Annual Ohio Foot and Ankle Scientific Seminar", "s": "2027-05-13", "e": "2027-05-14", "city": "Columbus", "st": "OH", "venue": "Hilton Columbus at Easton", "org": "Ohio FAMA", "web": "https://www.ohfama.org/aws/OHFAMA/pt/sp/conference_home_page", "ce": "Location: Columbus, OH CECH: Up to 17 CECH Available Reviews: Have you attended or exhibit", "url": "https://podiatrymeetings.com/event/ofama-annual-ohio-foot-and-ankle-scientific-seminar-columbus-oh/", "cech": 17},
+ {"id": 36445, "t": "ACFAP International Pediatric Foot and Ankle Conference", "s": "2027-05-13", "e": "2027-05-15", "city": "Tucson", "st": "AZ", "venue": "Casino Del Sol", "org": "ACFAP", "web": "https://acfap.org", "ce": "CECH: CECH information not yet available (as of 2/13/26)", "url": "https://podiatrymeetings.com/event/acfap-international-pediatric-foot-and-ankle-conference-tucson-az/"},
+ {"id": 35270, "t": "PRESENT Desert Foot East", "s": "2027-05-15", "e": "2027-05-16", "city": "Teaneck", "st": "NJ", "venue": "Teaneck Marriott at Glenpointe", "org": "PRESENT e-Learning Systems", "web": "https://www.podiatry.com/Podiatry-CME-Conferences-Webinars", "ce": "CECH: Up to 12 CECH available", "url": "https://podiatrymeetings.com/event/desert-foot-east-teaneck-nj-3/", "cech": 12},
+ {"id": 32854, "t": "Vascular Annual Meeting", "s": "2027-06-02", "e": "2027-06-05", "city": "San Diego", "st": "CA", "venue": "San Diego Convention Center", "org": "Society for Vascular Surgery", "web": "https://vascular.org/vascular-specialists/education-and-meetings/meetings/future-vam-dates", "ce": "CECH: CECH information not yet available (as of 10/24/25)", "url": "https://podiatrymeetings.com/event/vascular-annual-meeting-san-diego-ca/"},
+ {"id": 32905, "t": "PRESENT Superbones Superwounds Summer", "s": "2027-06-12", "e": "2027-06-13", "city": "Online", "st": "Virtual", "org": "PRESENT e-Learning Systems", "web": "https://www.podiatry.com/Podiatry-CME-Conferences-Webinars", "ce": "Location : Virtual CECH : Up to 16 CECH available Reviews: Have you attended or exhibited ", "url": "https://podiatrymeetings.com/event/superbones-superwounds-summer-virtual/", "cech": 16, "virt": true},
+ {"id": 35342, "t": "EFAS Minimally Invasive Surgery", "s": "2027-06-16", "e": "2027-06-18", "city": "Nottingham", "st": "UK", "venue": "Nottingham City Hospital", "org": "EFAS", "web": "https://www.efas.net/events/events-efas-calendar-2026", "ce": "CME information not available", "url": "https://podiatrymeetings.com/event/efas-minimally-invasive-surgery-nottingham-uk/", "intl": true},
+ {"id": 35346, "t": "Podiatry Institute Footprints in the Sand", "s": "2027-06-17", "e": "2027-06-20", "city": "Hilton Head Island", "st": "SC", "venue": "Hilton Beachfront Resort and Spa", "org": "Podiatry Institute (PI)", "web": "https://www.podiatryinstitute.com/hilton-head--sc", "ce": "Up to 20 CECH available", "url": "https://podiatrymeetings.com/event/podiatry-institute-footprints-in-the-sand-hilton-head-sc/", "cech": 20},
+ {"id": 40237, "t": "ACPPS National Conference on Regenerative and Functional Medicine", "s": "2027-06-18", "e": "2027-06-20", "city": "Des Plaines, IL", "st": "IL", "venue": "Rivers Casino", "org": "ACPPS", "web": "https://americancollegepps.com/events", "ce": "Up to 20 CECH available", "url": "https://podiatrymeetings.com/event/acpps-national-conference-on-regenerative-and-functional-medicine-rosemont-il/", "cech": 20},
+ {"id": 35348, "t": "The Western Foot and Ankle Conference", "s": "2027-06-24", "e": "2027-06-27", "city": "Anaheim", "st": "CA", "venue": "Disneyland Convention Center", "org": "California Podiatric Medical Association", "web": "https://www.thewestern.org", "ce": "CECH information not yet available", "url": "https://podiatrymeetings.com/event/cpma-western/"},
+ {"id": 35388, "t": "AOSSM Annual Meeting", "s": "2027-07-07", "e": "2027-07-10", "city": "Boston", "st": "MA", "venue": "Boston Convention Center", "org": "AOSSM", "web": "https://events.sportsmed.org/am2025", "ce": "CECH: CECH information not yet available (as of 10/2/25)", "url": "https://podiatrymeetings.com/event/aossm-annual-meeting-boston-ma/"},
+ {"id": 32572, "t": "APMA Annual Scientific Meeting (The National)", "s": "2027-07-15", "e": "2027-07-18", "city": "Aurora", "st": "CO", "venue": "Gaylord Rockies Resort & Convention Center", "org": "APMA", "web": "https://www.apma.org/the-national/", "ce": "Up to 24.5 CECH available", "url": "https://podiatrymeetings.com/event/apma-annual-scientific-meeting-the-national-nashville-tn/", "cech": 24.5},
+ {"id": 38655, "t": "PRESENT MIS Foot and Ankle Surgery Summit", "s": "2027-07-17", "e": "2027-07-17", "city": "Online", "st": "Virtual", "web": "https://www.podiatry.com/Podiatry-CME-Conferences-Webinars", "ce": "Up to 6.5 CECH credits", "url": "https://podiatrymeetings.com/event/present-mis-foot-and-ankle-surgery-summit-virtual/", "cech": 6.5, "virt": true},
+ {"id": 40144, "t": "Podiatry Institute – Portland", "s": "2027-08-01", "e": "2027-08-01", "city": "Portland", "st": "ME", "venue": "Holiday Inn Portland", "org": "Podiatry Institute (PI)", "web": "https://www.podiatryinstitute.com/2027-seminars", "ce": "Up to 20 CECH", "url": "https://podiatrymeetings.com/event/podiatry-institute-portland-portland-me/", "cech": 20},
+ {"id": 31927, "t": "Virginia PMA Summer Scientific Meeting", "s": "2027-08-11", "e": "2027-08-15", "city": "Virginia Beach", "st": "VA", "venue": "Marriott Virginia Beach Oceanfront", "org": "VPMA", "web": "https://vpma.org/2025-annual-meeting", "ce": "CECH: Information not available (as of 10/24/2025)", "url": "https://podiatrymeetings.com/event/virginia-pma-summer-scientific-meeting-virginia-beach-va-3/"},
+ {"id": 14802, "t": "PRESENT Surgery and Advanced Wound Care Summit for Podiatrists and Residents", "s": "2027-08-14", "e": "2027-08-15", "city": "Online", "st": "Virtual", "org": "PRESENT e-Learning Systems", "web": "https://www.surgwoundsummit.com/", "ce": "Location: Virtual CECH: Up to 16 CME/CECH available Have you attended or exhibited at this", "url": "https://podiatrymeetings.com/event/present-surgery-and-wound-care-summit-teaneck-nj/", "cech": 16, "virt": true},
+ {"id": 35374, "t": "Podiatry Institute San Diego", "s": "2027-09-23", "e": "2027-09-26", "city": "San Diego", "st": "CA", "venue": "Hyatt Regency Mission Bay Spa & Marina", "org": "Podiatry Institute (PI)", "web": "https://podiatryinstitute.com/seminars/26SanDiego/SanDiego.html", "ce": "Up to 25 CECH available", "url": "https://podiatrymeetings.com/event/podiatry-institute-san-diego-san-diego-ca/", "cech": 25},
+ {"id": 35376, "t": "PRESENT Superbones Superwounds Virtual Fall", "s": "2027-09-25", "e": "2027-09-26", "city": "Online", "st": "Virtual", "org": "PRESENT e-Learning Systems", "web": "https://www.podiatry.com/Podiatry-CME-Conferences", "ce": "Up to 16 CECH/CME credits", "url": "https://podiatrymeetings.com/event/superbones-superwounds-virtual-fall-virtual-2/", "cech": 16, "virt": true},
+ {"id": 40191, "t": "The Foot & Ankle Show", "s": "2027-09-29", "e": "2027-09-30", "city": "Farnborough GU14 6FD", "st": "UK", "venue": "Farnborough International Exhibition & Conference Centre", "org": "The Foot and Ankle Show", "web": "https://www.footandankleshow.com", "ce": "CECH information not yet available", "url": "https://podiatrymeetings.com/event/the-foot-ankle-show-farnborough-uk/", "intl": true},
+ {"id": 35386, "t": "AOFAS Annual Meeting", "s": "2027-10-13", "e": "2027-10-16", "city": "San Antonio", "st": "TX", "org": "AOFAS", "web": "https://www.aofas.org/annual-meeting", "ce": "CECH: CECH information not yet available (as of 5/24/26)", "url": "https://podiatrymeetings.com/event/aofas-winter-meeting-orlando-fl/"},
+ {"id": 40180, "t": "PRESENT Pacific Advanced Surgical and Wound Care Summit", "s": "2027-10-16", "e": "2027-10-17", "city": "Newport Beach", "st": "CA", "venue": "Pendry Newport Beach", "org": "PRESENT e-Learning Systems", "web": "https://www.podiatry.com/Podiatry-CME-Conferences-Webinars", "ce": "Approved for up to 12 CME/CECH Credit Hours for DPMs", "url": "https://podiatrymeetings.com/event/present-pacific-advanced-surgical-and-wound-care-summit-newport-beach-ca/", "cech": 12},
+ {"id": 37552, "t": "EFAS Soft Tissue Course", "s": "2027-10-28", "e": "2027-10-29", "city": "Vinlnius", "st": "Lithuania", "org": "EFAS", "web": "https://www.efas.net/events/events-efas-calendar-2027", "ce": "CME not available", "url": "https://podiatrymeetings.com/event/efas-soft-tissue-course-vinlnius-lithuania/", "intl": true},
+ {"id": 40183, "t": "EFAS Hindfoot", "s": "2027-12-10", "e": "2027-12-11", "city": "Augsburg", "st": "Germany", "org": "EFAS", "web": "https://www.efas.net/members/events", "ce": "CME information not available", "url": "https://podiatrymeetings.com/event/efas-hindfoot-augsburg-germany/", "intl": true},
+ {"id": 35450, "t": "AOFAS Winter Meeting", "s": "2028-02-17", "e": "2028-02-19", "city": "Keystone", "st": "CO", "org": "AOFAS", "web": "https://www.aofas.org/education/meetings-courses/winter-meeting/2025/10/10/default-calendar/aossm-aofas-surgical-skills-course", "ce": "CECH: CECH information not yet available (as of 9/8/25)", "url": "https://podiatrymeetings.com/event/aofas-winter-meeting-keystone-co/"},
+ {"id": 32870, "t": "ACFAS Annual Scientific Conference", "s": "2028-03-16", "e": "2028-03-19", "city": "Phoenix", "st": "AZ", "org": "ACFAS", "web": "https://www.acfas.org/education-professional-development/educationcalendar", "ce": "CECH: CECH information not yet available (as of 10/24/25)", "url": "https://podiatrymeetings.com/event/acfas-annual-scientific-conference-phoenix-az/"},
+ {"id": 35397, "t": "SAWC Spring", "s": "2028-04-26", "e": "2028-04-30", "city": "Orlando", "st": "FL", "venue": "Orange County Convention Center", "org": "SAWC", "web": "https://woundheal.org/Meeting/Archives/", "ce": "CECH: CECH information not yet available (as of 10/24/25)", "url": "https://podiatrymeetings.com/event/sawc-spring-whs-annual-meeting-orlando-fl/"},
+ {"id": 35391, "t": "AOSSM Annual Meeting", "s": "2028-07-12", "e": "2028-07-16", "city": "Chula Vista", "st": "CA", "venue": "Gaylord Pacific Resort and Convention Center", "org": "AOSSM", "web": "https://aossm2027.eventscribe.net/aaStatic.asp?SFP=R0dHVUZSSkxAMjcwODI", "ce": "CECH information not yet available", "url": "https://podiatrymeetings.com/event/aossm-annual-meeting-chula-vista-ca/"},
+ {"id": 36993, "t": "Midwest Foot and Ankle Conference", "s": "2028-08-03", "e": "2028-08-06", "city": "Chicago", "st": "IL", "venue": "Chicago Marriott Downtown Magnificent Mile", "org": "ASPMA", "web": "https://themidwestfac.org/futuredates/", "ce": "Up to 30.25 CECH available", "url": "https://podiatrymeetings.com/event/midwest-foot-and-ankle-conference-chicago-il-2/", "cech": 30.25},
+ {"id": 32580, "t": "AOFAS Annual Meeting", "s": "2028-10-18", "e": "2028-10-21", "city": "Boston", "st": "MA", "org": "AOFAS", "web": "https://www.aofas.org/annual-meeting", "ce": "CECH: CECH information not yet available (as of 10/24/25)", "url": "https://podiatrymeetings.com/event/aofas-annual-meeting-boston-ma/"}];
+const TIPS=[
+ {d:"Jun 16, 2026",t:"Ann Out and About",c:"Meetings",u:"https://podiatrymeetings.com/2026/06/16/ann-out-and-about/"},
+ {d:"May 15, 2026",t:"Putting Podiatry First",c:"DPMs",u:"https://podiatrymeetings.com/2026/05/15/putting-podiatry-first/"},
+ {d:"Apr 25, 2026",t:"Innovators and Icons",c:"DPMs",u:"https://podiatrymeetings.com/2026/04/25/innovators-and-icons/"},
+ {d:"Apr 8, 2026",t:"MFAC Recap",c:"Meetings",u:"https://podiatrymeetings.com/2026/04/08/mfac-recap/"},
+ {d:"Apr 1, 2026",t:"Building a Five-Star Practice: How Communication Shapes the Patient Experience",c:"DPMs",u:"https://podiatrymeetings.com/2026/04/01/building-a-five-star-practice-how-communication-shapes-the-patient-experience/"},
+ {d:"Mar 13, 2026",t:"Hot take on ACFAS and AMIFAS",c:"Meetings",u:"https://podiatrymeetings.com/2026/03/13/hot-take-on-acfas-and-amifas/"}
+];
+const PARTNERS=["ToeFX","SureFit","Nolaro","FPMA","ACAFAP","AIMx Podiatry","PowerStep","StepCraft","The Remy","Zimmer","MediaNV"];
+
+const MON=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const pd=s=>{const[y,m,d]=s.split("-").map(Number);return new Date(y,m-1,d)};
+const today=(()=>{const n=new Date();return new Date(n.getFullYear(),n.getMonth(),n.getDate())})();
+const isLive=e=>pd(e.s)<=today&&today<=pd(e.e);
+const daysTo=e=>Math.round((pd(e.s)-today)/864e5);
+const range=e=>{const a=pd(e.s),b=pd(e.e);return e.s===e.e?`${MON[a.getMonth()]} ${a.getDate()}`:`${MON[a.getMonth()]} ${a.getDate()}–${a.getMonth()===b.getMonth()?"":MON[b.getMonth()]+" "}${b.getDate()}`};
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+const store={get(k,d){try{return JSON.parse(localStorage.getItem(k))??d}catch{return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch{}}};
+let saved=new Set(store.get("pm_saved2",[36108,36988]));
+let state={tab:store.get("pm_tab","meetings"),filter:"all",q:""};
+
+const slot=(label,html)=>`<div class="slot"><span class="slot-tag">${label}</span>${html}</div>`;
+const sponsorCard=(label,kicker,title,sub,cta)=>slot(label,`<div class="sponsored"><div class="logo-ph">AD</div><div style="min-width:0"><div class="k">${kicker}</div><div class="t">${title}</div><div class="s">${sub}</div><button class="cta" data-ad>${cta}</button></div></div>`);
+
+function evRow(e){
+  const a=pd(e.s),on=saved.has(e.id),b=[];
+  if(isLive(e))b.push('<span class="badge live">Happening now</span>');
+  else if(daysTo(e)>0&&daysTo(e)<=7)b.push(`<span class="badge">In ${daysTo(e)} day${daysTo(e)>1?"s":""}</span>`);
+  if(e.cech)b.push(`<span class="badge ce">${e.cech} CECH</span>`);
+  if(e.intl)b.push('<span class="badge intl">International</span>');
+  if(e.virt)b.push('<span class="badge virt">Virtual</span>');
+  return `<div class="ev" data-open="${e.id}" role="button" tabindex="0">
+    <div class="date"><div class="m">${MON[a.getMonth()]}</div><div class="d">${a.getDate()}</div></div>
+    <div class="ev-body"><div class="ev-title">${esc(e.t)}</div><div class="ev-meta">${range(e)} · ${esc(e.city)}, ${esc(e.st)}</div>${b.length?`<div class="badges">${b.join("")}</div>`:""}</div>
+    <button class="save" data-save="${e.id}" aria-pressed="${on}" aria-label="${on?"Remove from":"Save to"} My Meetings">${on?"★":"☆"}</button></div>`;
+}
+
+function filtered(){
+  return EVENTS.filter(e=>{
+    if(pd(e.e)<today)return false;
+    const q=state.q.trim().toLowerCase();
+    if(q&&!(`${e.t} ${e.city} ${e.st}`.toLowerCase().includes(q)))return false;
+    if(state.filter==="week")return daysTo(e)<=7;
+    if(state.filter==="us")return !e.intl;
+    if(state.filter==="intl")return !!e.intl;
+    if(state.filter==="ce")return !!e.cech;
+    return true;
+  });
+}
+
+const V={
+ meetings(){
+  const list=filtered();let rows=[];
+  list.forEach((e,i)=>{rows.push(evRow(e));if(i===3)rows.push(sponsorCard("Slot B · In-feed native ad","Sponsored · sample","Your brand in the meeting feed","Shown between listings to DPMs planning their next meeting.","Learn more"))});
+  return `${slot("Slot A · Presented-by banner",`<div class="presented"><div class="logo-ph">LOGO</div><div>Meeting Calendar <b>presented by</b> your partner here</div></div>`)}
+   <div><h2>Upcoming meetings</h2><div class="note" style="margin-top:2px">${list.length} meetings · from PodiatryMeetings.com</div></div>
+   <div class="search"><input id="q" type="search" placeholder="Search meeting, city or state" value="${esc(state.q)}" aria-label="Search meetings"></div>
+   <div class="chips" role="group" aria-label="Filter">${[["all","All"],["week","This week"],["us","US"],["intl","International"],["ce","CECH listed"]].map(([k,l])=>`<button class="chip" data-filter="${k}" aria-pressed="${state.filter===k}">${l}</button>`).join("")}</div>
+   <div class="list">${rows.join("")||'<div class="empty">No meetings match. Clear the search or pick another filter.</div>'}</div>`;
+ },
+ saved(){
+  const list=EVENTS.filter(e=>saved.has(e.id)).sort((a,b)=>a.s.localeCompare(b.s));
+  const next=list.find(e=>pd(e.e)>=today);
+  return `<h2>My Meetings</h2>
+   ${next?`<div class="hero-card"><h3>${isLive(next)?"Happening now":"Next up"}</h3><div class="num">${isLive(next)?"Today":daysTo(next)+" days"}</div><div><b>${esc(next.t)}</b><div class="ev-meta">${range(next)} · ${esc(next.city)}, ${esc(next.st)}</div></div></div>`:""}
+   ${next?sponsorCard("Slot C · Pre-meeting exhibitor alert","Visit at this meeting · sample",`Meet exhibitors at ${esc(next.t)}`,"Exhibitors pay to reach doctors who saved this meeting, before they arrive.","See booth info"):""}
+   <div class="list">${list.map(evRow).join("")||'<div class="empty">Tap ☆ on any meeting to save it here. You get a countdown and a reminder before it starts.</div>'}</div>`;
+ },
+ reviews(){
+  const opts=EVENTS.map(e=>`<option value="${e.id}">${esc(e.t)}</option>`).join("");
+  return `<h2>Real meeting reviews</h2>
+   <p class="note" style="margin:0">Ratings from DPMs and exhibitors. This is what sets PodiatryMeetings.com apart.</p>
+   <div class="review">The hands-on workshops take the program to a higher level. You practice on the products, not just hear lectures.<div class="who">DPM · workshop review</div></div>
+   <div class="review">The SAM conference is one of my favorites. Beautiful venue and great weather.<div class="who">DPM · FPMA SAM</div></div>
+   <form class="hero-card" id="rate"><h3>Rate a meeting</h3>
+     <label class="note" for="rmeet">Which meeting?</label><select id="rmeet">${opts}</select>
+     <div class="note">Overall</div><div class="stars" id="stars">${[1,2,3,4,5].map(n=>`<button type="button" class="star" data-star="${n}" aria-label="${n} star${n>1?"s":""}">★</button>`).join("")}</div>
+     <label class="note" for="rrole">I attended as</label><select id="rrole"><option>Doctor</option><option>Assistant</option><option>Resident</option><option>Exhibitor / Vendor</option></select>
+     <label class="note" for="rtext">What should other DPMs know?</label><textarea id="rtext" rows="3" placeholder="Speakers, workshops, exhibit hall, venue…"></textarea>
+     <button class="btn primary" type="submit">Submit review</button></form>`;
+ },
+ learn(){
+  return `<h2>Weekly webinars</h2>
+   <p class="note" style="margin:0">Clinical care, practice management and marketing, from vetted PodiatryMeetings partners.</p>
+   ${slot("Slot D · Sponsored webinar (Practice Partner Academy)",`<div class="hero-card"><h3>Practice Partner Academy</h3><div style="font-weight:700;font-size:17px">Presentations from trusted industry experts</div><div class="note">Sponsors present to DPMs live, then the recording lives in the archive.</div><div style="display:flex;gap:8px;flex-wrap:wrap"><a class="cta" href="https://podiatrymeetings.com/upcoming-webinars/" target="_blank" rel="noopener">Upcoming schedule</a><a class="cta" style="background:var(--teal)" href="https://podiatrymeetings.com/sponsor-webinar-series/" target="_blank" rel="noopener">Browse archive</a></div></div>`)}
+   <h3 style="margin-top:6px">Preferred partners</h3>
+   ${slot("Slot E · Partner directory",`<div class="partners">${PARTNERS.map(p=>`<span>${p}</span>`).join("")}</div>`)}`;
+ },
+ tips(){
+  return `<div style="display:flex;align-items:center;gap:12px"><div class="mark" style="width:44px;height:44px;font-size:16px">AD</div><div><h2>Ann's Tips</h2><div class="note">From the desk of Miss Ann-Tastic</div></div></div>
+   <div class="list">${TIPS.map((a,i)=>(i===2?sponsorCard("Slot F · Newsletter / article sponsor","Sponsored · sample","Sponsor Ann's Tips","Your message alongside the content DPMs read every week.","Learn more"):"")+`<a class="article" href="${a.u}" target="_blank" rel="noopener"><div class="d">${a.d} · ${a.c}</div><div class="t">${esc(a.t)}</div></a>`).join("")}</div>
+   <form class="hero-card" id="signup"><h3>Get industry updates</h3><div class="note">Join the industry's largest podiatry email list.</div>
+     <input id="semail" type="email" required placeholder="Email" style="border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:10px;padding:10px;font:inherit">
+     <select id="srole" aria-label="Who are you?"><option>Doctor</option><option>Assistant</option><option>Resident</option><option>Exhibitor / Vendor</option><option>Meeting Planner / Organization Committee</option></select>
+     <button class="btn primary" type="submit">Subscribe</button></form>`;
+ }
+};
+
+/* ---------- Jobs + Equipment boards (sample listings) ---------- */
+const JOBS=[
+ {id:1,t:"Associate Podiatrist",co:"3-doctor foot & ankle practice",loc:"Nassau County, NY",type:"Full-time",role:"dpm",pay:"$150k–$190k + bonus",tags:["Surgical privileges","Partner track"],d:2,f:true,desc:"Busy suburban practice with in-house X-ray and ASC access. Mix of clinic and surgery with two OR days a month. Partnership track after year three."},
+ {id:2,t:"Podiatric Surgeon",co:"Multi-specialty orthopedic group",loc:"Charlotte, NC",type:"Full-time",role:"dpm",pay:"$220k base + RVU",tags:["Board certified","Wound care"],d:5,f:false,desc:"Join a 14-provider orthopedic group as its second podiatric surgeon. Hospital and ASC privileges, full support staff, CME allowance."},
+ {id:3,t:"Locum DPM, 6-week coverage",co:"Solo practice",loc:"Scottsdale, AZ",type:"Locum",role:"locum",pay:"$1,100/day",tags:["Starts Nov 30","Clinic only"],d:1,f:false,desc:"Clinic-only coverage during the owner's leave. About 22 patients a day, established staff, EHR training provided."},
+ {id:4,t:"Certified Medical Assistant",co:"Podiatry practice, 2 locations",loc:"Tampa, FL",type:"Full-time",role:"staff",pay:"$19–$23/hr",tags:["X-ray license a plus"],d:4,f:false,desc:"Room patients, take histories, assist with in-office procedures and casting. Podiatry experience preferred."},
+ {id:5,t:"Podiatry Biller / Coder",co:"Multi-state podiatry group",loc:"Remote",type:"Full-time",role:"staff",pay:"$55k–$68k",tags:["CPC preferred","Remote"],d:7,f:false,desc:"Charge entry, denials and appeals for a 9-location group. Routine foot care and DME billing experience a strong plus."},
+ {id:6,t:"Part-time DPM, nursing home rounds",co:"Mobile podiatry group",loc:"Chicago suburbs, IL",type:"Part-time",role:"locum",pay:"Per diem",tags:["Flexible schedule"],d:9,f:false,desc:"Two to three days a week visiting long-term care facilities. Scheduling, billing and supplies handled for you."}
+];
+const CAT={imaging:"Imaging",laser:"Lasers",chairs:"Chairs",steril:"Sterilization",shock:"Shockwave",other:"Other"};
+const GEAR=[
+ {id:1,t:"Digital X-ray system with DR panel",cat:"imaging",cond:"Used, excellent",price:"$18,500",loc:"Long Island, NY",seller:"Retiring DPM",d:1,f:true,desc:"Wall-mounted generator with wireless DR panel and acquisition software. Serviced annually with records. Buyer arranges removal."},
+ {id:2,t:"Nail fungus laser, 1064 nm",cat:"laser",cond:"Used, good",price:"$9,900",loc:"Dallas, TX",seller:"Podiatry practice",d:3,f:false,desc:"Low hours, includes cart, eyewear and handpiece. Upgrading to a combination unit."},
+ {id:3,t:"Power podiatry chair",cat:"chairs",cond:"Refurbished",price:"$4,250",loc:"Columbus, OH",seller:"Equipment dealer",d:2,f:false,desc:"Fully powered with foot control, new upholstery in slate gray. 90-day warranty."},
+ {id:4,t:"Tabletop autoclave, 11-inch chamber",cat:"steril",cond:"Used, good",price:"$1,800",loc:"Phoenix, AZ",seller:"Podiatry practice",d:6,f:false,desc:"Passes spore testing, recent gasket and filter change. Two trays included."},
+ {id:5,t:"Radial shockwave unit",cat:"shock",cond:"Demo unit",price:"$14,000",loc:"Orlando, FL",seller:"Equipment dealer",d:0,f:true,desc:"Trade-show demo unit with full applicator set and cart. Training session included."},
+ {id:6,t:"Portable diagnostic ultrasound",cat:"imaging",cond:"Used, excellent",price:"$6,700",loc:"Denver, CO",seller:"Podiatry practice",d:8,f:false,desc:"Linear MSK probe, laptop-style unit with carrying case. Great for in-office injections."},
+ {id:7,t:"Nail drill with dust extraction",cat:"other",cond:"Used, good",price:"$950",loc:"Boston, MA",seller:"Podiatry practice",d:10,f:false,desc:"Wet-free extraction, variable speed, spare filters and burs."}
+];
+Object.assign(state,{jf:"all",gf:"all",jq:"",gq:""});
+const ago=d=>d===0?"Just posted":d===1?"1 day ago":d+" days ago";
+
+function postCard(kind,x){
+  const job=kind==="job";
+  const html=`<div class="post${x.f?" feat":""}" data-post-open="${kind}:${x.id}" role="button" tabindex="0">
+    <div class="post-top"><div class="post-title">${esc(x.t)}</div>${job?"":`<div class="price">${esc(x.price)}</div>`}</div>
+    <div class="ev-meta">${job?esc(x.co)+" · "+esc(x.loc):esc(x.cond)+" · "+esc(x.loc)}</div>
+    <div class="badges">${x.f?'<span class="badge feat">Featured</span>':""}${job?`<span class="badge">${esc(x.type)}</span><span class="badge">${esc(x.pay)}</span>`:`<span class="badge">${CAT[x.cat]}</span>`}<span class="badge intl">${ago(x.d)}</span></div></div>`;
+  return x.f?slot(job?"Slot H · Featured job (paid upgrade)":"Slot J · Featured equipment (paid upgrade)",html):html;
+}
+function board(kind){
+  const job=kind==="job",data=job?JOBS:GEAR,fk=job?"jf":"gf",qk=job?"jq":"gq",q=state[qk].trim().toLowerCase();
+  const chips=job?[["all","All"],["dpm","DPM"],["staff","Staff"],["locum","Locum & part-time"]]:[["all","All"],...Object.entries(CAT)];
+  const list=data.filter(x=>(state[fk]==="all"||(job?x.role:x.cat)===state[fk])&&(!q||JSON.stringify(x).toLowerCase().includes(q)))
+    .sort((a,b)=>(b.f-a.f)||(a.d-b.d));
+  return `<div class="board-head"><div><h2>${job?"Podiatry jobs":"Equipment for sale"}</h2><div class="note" style="margin-top:2px">${list.length} listings · sample data for the prototype</div></div>
+     <button class="newbtn" data-new="${kind}">${job?"Post a job":"List equipment"}</button></div>
+   ${job?slot("Slot I · Job board sponsor",`<div class="presented"><div class="logo-ph">LOGO</div><div>Job board <b>presented by</b> your recruiting partner here</div></div>`)
+        :sponsorCard("Slot K · Equipment financing partner","Sponsored · sample","Finance your next piece of equipment","A financing partner shows here, next to every listing doctors browse.","Check rates")}
+   <div class="search"><input id="${qk}" type="search" placeholder="${job?"Search title, city or state":"Search equipment or city"}" value="${esc(state[qk])}" aria-label="Search listings"></div>
+   <div class="chips" role="group" aria-label="Filter">${chips.map(([k,l])=>`<button class="chip" data-bfilter="${fk}:${k}" aria-pressed="${state[fk]===k}">${l}</button>`).join("")}</div>
+   <div class="list">${list.map(x=>postCard(kind,x)).join("")||'<div class="empty">No listings match. Clear the search or pick another filter.</div>'}</div>`;
+}
+function openPost(kind,id){
+  const job=kind==="job",x=(job?JOBS:GEAR).find(p=>p.id==id);
+  const rows=job?[["Practice",x.co],["Location",x.loc],["Type",x.type],["Pay",x.pay],["Posted",ago(x.d)]]
+                :[["Price",x.price],["Condition",x.cond],["Category",CAT[x.cat]],["Location",x.loc],["Seller",x.seller],["Posted",ago(x.d)]];
+  document.getElementById("sheetInner").innerHTML=`
+   <div class="sheet-head"><div><h3>${x.f?"Featured listing":job?"Job":"Equipment"}</h3><h2 style="margin-top:4px">${esc(x.t)}</h2></div><button class="close" data-close aria-label="Close">✕</button></div>
+   <div class="facts">${rows.map(([k,v])=>`<div class="fact"><span>${k}</span><span>${esc(v)}</span></div>`).join("")}</div>
+   <p style="margin:0">${esc(x.desc)}</p>
+   ${job&&x.tags?`<div class="badges">${x.tags.map(t=>`<span class="badge">${esc(t)}</span>`).join("")}</div>`:""}
+   <div class="actions"><button class="btn primary" data-inquire="${kind}">${job?"Apply":"Contact seller"}</button><button class="btn" data-close>Back to board</button></div>
+   <div class="note">Messages go through PodiatryMeetings.com, so contact details stay private.</div>`;
+  document.getElementById("sheet").hidden=false;
+}
+function openNew(kind){
+  const job=kind==="job";
+  document.getElementById("sheetInner").innerHTML=`
+   <div class="sheet-head"><div><h3>${job?"Hiring?":"Selling?"}</h3><h2 style="margin-top:4px">${job?"Post a job":"List equipment"}</h2></div><button class="close" data-close aria-label="Close">✕</button></div>
+   <form id="postform" data-kind="${kind}" style="display:flex;flex-direction:column;gap:12px">
+     <div class="field"><label class="note" for="pt">${job?"Job title":"What are you selling?"}</label><input id="pt" required placeholder="${job?"e.g. Associate Podiatrist":"e.g. Digital X-ray system"}"></div>
+     <div class="field"><label class="note" for="po">${job?"Practice description":"Condition"}</label>${job?'<input id="po" placeholder="e.g. 2-doctor practice">':'<select id="po"><option>Used, excellent</option><option>Used, good</option><option>Refurbished</option><option>Demo unit</option><option>New</option></select>'}</div>
+     ${job?'<div class="field"><label class="note" for="pr">Role</label><select id="pr"><option value="dpm">DPM</option><option value="staff">Staff</option><option value="locum">Locum & part-time</option></select></div>'
+          :`<div class="field"><label class="note" for="pr">Category</label><select id="pr">${Object.entries(CAT).map(([k,v])=>`<option value="${k}">${v}</option>`).join("")}</select></div>`}
+     <div class="field"><label class="note" for="pl">Location</label><input id="pl" required placeholder="City, state"></div>
+     <div class="field"><label class="note" for="pp">${job?"Pay":"Asking price"}</label><input id="pp" placeholder="${job?"e.g. $160k + bonus":"e.g. $4,500"}"></div>
+     <div class="field"><label class="note" for="pd">Details</label><textarea id="pd" rows="3"></textarea></div>
+     <div class="tier" role="radiogroup" aria-label="Listing type">
+       <label><input type="radio" name="tier" value="std" checked><span><b>Standard</b>Listed by date</span></label>
+       <label><input type="radio" name="tier" value="feat"><span><b>Featured</b>Pinned to the top and highlighted</span></label>
+     </div>
+     <fieldset class="prem" id="prem" disabled>
+       <legend>🔒 Unlocked with Featured</legend>
+       <div class="field"><label class="note" for="ph">${job?"Practice logo":"Photos (up to 8)"}</label><input id="ph" type="file" accept="image/*" ${job?"":"multiple"}></div>
+       <div class="field"><label class="note" for="pw">${job?"Direct application link":"Your website or spec sheet link"}</label><input id="pw" type="url" placeholder="https://"></div>
+       <div class="field"><label class="note" for="pv">${job?"Show pay range on the card":"Show phone number on the listing"}</label><select id="pv"><option>Yes</option><option>No</option></select></div>
+     </fieldset>
+     <button class="btn primary" type="submit">${job?"Post job":"Post listing"}</button>
+   </form>`;
+  document.getElementById("sheet").hidden=false;
+  document.getElementById("pt").focus();
+}
+
+Object.assign(V,{
+ meetings(){
+  const chips=`<div class="chips" role="group" aria-label="Filter">${[["all","All"],["saved","★ Saved"],["week","This week"],["us","US"],["intl","International"],["ce","CECH listed"]].map(([k,l])=>`<button class="chip" data-filter="${k}" aria-pressed="${state.filter===k}">${l}</button>`).join("")}</div>`;
+  if(state.filter==="saved")return chips+V.saved();
+  const list=filtered();let rows=[];
+  list.forEach((e,i)=>{rows.push(evRow(e));if(i===3)rows.push(sponsorCard("Slot B · In-feed native ad","Sponsored · sample","Your brand in the meeting feed","Shown between listings to DPMs planning their next meeting.","Learn more"))});
+  return `${slot("Slot A · Presented-by banner",`<div class="presented"><div class="logo-ph">LOGO</div><div>Meeting Calendar <b>presented by</b> your partner here</div></div>`)}
+   <div><h2>Upcoming meetings</h2><div class="note" style="margin-top:2px">${list.length} meetings · from PodiatryMeetings.com</div></div>
+   <div class="search"><input id="q" type="search" placeholder="Search meeting, city or state" value="${esc(state.q)}" aria-label="Search meetings"></div>
+   ${chips}<div class="list">${rows.join("")||'<div class="empty">No meetings match. Clear the search or pick another filter.</div>'}</div>`;
+ },
+ jobs(){return board("job")},
+ gear(){return board("gear")},
+ more(){return V.learn()+V.tips()}
+});
+if(!V[state.tab]||["saved","learn","tips","reviews"].includes(state.tab))state.tab="meetings";
+document.addEventListener("change",e=>{if(e.target.name!=="tier")return;const p=document.getElementById("prem");if(p)p.disabled=e.target.value!=="feat"});
+
+document.addEventListener("click",ev=>{
+  const t=ev.target.closest("[data-bfilter],[data-post-open],[data-new],[data-inquire]");if(!t)return;
+  if(t.dataset.bfilter){const[k,v]=t.dataset.bfilter.split(":");state[k]=v;render();return}
+  if(t.dataset.postOpen){const[k,id]=t.dataset.postOpen.split(":");openPost(k,id);return}
+  if(t.dataset.new){openNew(t.dataset.new);return}
+  if(t.dataset.inquire){closeSheet();toast(t.dataset.inquire==="job"?"Application sent to the practice":"Message sent to the seller")}
+});
+document.addEventListener("keydown",e=>{const p=e.target.dataset&&e.target.dataset.postOpen;if(e.key==="Enter"&&p){const[k,id]=p.split(":");openPost(k,id)}});
+document.addEventListener("input",e=>{const id=e.target.id;if(id!=="jq"&&id!=="gq")return;state[id]=e.target.value;const pos=e.target.selectionStart;render();const n=document.getElementById(id);n.focus();n.setSelectionRange(pos,pos)});
+document.addEventListener("submit",e=>{if(e.target.id!=="postform_legacy")return;e.preventDefault();
+  const kind=e.target.dataset.kind,job=kind==="job",g=i=>document.getElementById(i).value.trim();
+  const feat=e.target.querySelector('input[name="tier"]:checked').value==="feat";
+  const base={id:Date.now(),t:g("pt"),loc:g("pl"),d:0,f:feat,desc:g("pd")||"No details provided."};
+  if(job)JOBS.push({...base,co:g("po")||"Podiatry practice",role:g("pr"),type:{dpm:"Full-time",staff:"Full-time",locum:"Part-time"}[g("pr")],pay:g("pp")||"Not listed",tags:[]});
+  else GEAR.push({...base,cond:g("po"),cat:g("pr"),price:g("pp")||"Make an offer",seller:"You"});
+  closeSheet();state[job?"jf":"gf"]="all";state[job?"jq":"gq"]="";render();toast(feat?"Posted as a featured listing":"Your listing is live")});
+
+EVENTS.sort((a,b)=>a.s.localeCompare(b.s));
+
+Object.assign(state,{mview:store.get("pm_mview","list"),calY:today.getFullYear(),calM:today.getMonth(),calD:isoTodayStr()});
+function isoTodayStr(){return `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,"0")}-${String(today.getDate()).padStart(2,"0")}`}
+const DOW=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"],MONTHS=["January","February","March","April","May","June","July","August","September","October","November","December"];
+function calendarView(list){
+  const y=state.calY,m=state.calM,first=new Date(y,m,1).getDay(),days=new Date(y,m+1,0).getDate(),cells=[];
+  const on=d=>list.filter(e=>{const x=new Date(y,m,d);return pd(e.s)<=x&&x<=pd(e.e)});
+  for(let i=0;i<first;i++)cells.push('<span class="cday out" aria-hidden="true"></span>');
+  for(let d=1;d<=days;d++){const iso=`${y}-${String(m+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`,n=on(d).length,isT=iso===isoTodayStr();
+    cells.push(`<button class="cday${n?" has":""}${isT?" today":""}" data-calday="${iso}" aria-pressed="${state.calD===iso}" aria-label="${MONTHS[m]} ${d}, ${n} meeting${n===1?"":"s"}">${d}<span class="dots">${"<i></i>".repeat(Math.min(n,3))}</span></button>`)}
+  const sel=state.calD.startsWith(`${y}-${String(m+1).padStart(2,"0")}`)?list.filter(e=>pd(e.s)<=pd(state.calD)&&pd(state.calD)<=pd(e.e)):[];
+  const monthCount=list.filter(e=>pd(e.s)<=new Date(y,m,days)&&pd(e.e)>=new Date(y,m,1)).length;
+  const sd=pd(state.calD);
+  return `<div class="calhead"><button class="calnav" data-calnav="-1" aria-label="Previous month">‹</button><div style="text-align:center"><b>${MONTHS[m]} ${y}</b><div class="note">${monthCount} meeting${monthCount===1?"":"s"}</div></div><button class="calnav" data-calnav="1" aria-label="Next month">›</button></div>
+   <div class="cal">${DOW.map(d=>`<span class="dow">${d[0]}</span>`).join("")}${cells.join("")}</div>
+   <h3>${sel.length?`${MON[sd.getMonth()]} ${sd.getDate()} · ${sel.length} meeting${sel.length>1?"s":""}`:"Tap a highlighted day"}</h3>
+   <div class="list">${sel.map(evRow).join("")||'<div class="empty">No meetings on this day.</div>'}</div>`;
+}
+V.meetings=function(){
+  const chips=`<div class="chips" role="group" aria-label="Filter">${[["all","All"],["saved","★ Saved"],["week","This week"],["us","US"],["intl","International"],["virt","Virtual"],["ce","CECH listed"]].map(([k,l])=>`<button class="chip" data-filter="${k}" aria-pressed="${state.filter===k}">${l}</button>`).join("")}</div>`;
+  if(state.filter==="saved")return chips+V.saved();
+  const seg=`<div class="seg seg2" role="group" aria-label="View">${[["list","List"],["cal","Calendar"]].map(([k,l])=>`<button data-mview="${k}" aria-pressed="${state.mview===k}">${l}</button>`).join("")}</div>`;
+  const head=`${slot("Slot A · Presented-by banner",`<div class="presented"><div class="logo-ph">LOGO</div><div>Meeting Calendar <b>presented by</b> your partner here</div></div>`)}
+   <div class="board-head"><div><h2>Meeting calendar</h2><div class="sync" style="margin-top:4px"><i></i>Synced from the PodiatryMeetings.com calendar</div></div>
+   <a class="buy" href="https://podiatrymeetings.com/events/?ical=1" target="_blank" rel="noopener">Subscribe</a></div>
+   ${seg}<div class="search"><input id="q" type="search" placeholder="Search meeting, city or state" value="${esc(state.q)}" aria-label="Search meetings"></div>${chips}`;
+  if(state.mview==="cal"){const all=EVENTS.filter(e=>{const q=state.q.trim().toLowerCase();if(q&&!(`${e.t} ${e.city} ${e.st}`.toLowerCase().includes(q)))return false;
+      if(state.filter==="us")return!e.intl&&!e.virt;if(state.filter==="intl")return!!e.intl;if(state.filter==="virt")return!!e.virt;if(state.filter==="ce")return!!e.cech;if(state.filter==="week")return daysTo(e)<=7&&pd(e.e)>=today;return true});
+    return head+calendarView(all)}
+  const list=filtered(),rows=[];
+  list.forEach((e,i)=>{rows.push(evRow(e));if(i===3)rows.push(sponsorCard("Slot B · In-feed native ad","Sponsored · sample","Your brand in the meeting feed","Shown between listings to DPMs planning their next meeting.","Learn more"))});
+  return `${head}<div class="note">${list.length} upcoming meetings</div><div class="list">${rows.join("")||'<div class="empty">No meetings match. Clear the search or pick another filter.</div>'}</div>`;
+};
+const _filtered=filtered;
+filtered=function(){return _filtered().filter(e=>state.filter==="us"?!e.virt:state.filter==="virt"?!!e.virt:true)};
+document.addEventListener("click",e=>{const t=e.target.closest("[data-mview],[data-calnav],[data-calday]");if(!t)return;
+  if(t.dataset.mview){state.mview=t.dataset.mview;store.set("pm_mview",state.mview);render();return}
+  if(t.dataset.calnav){let m=state.calM+ +t.dataset.calnav,y=state.calY;if(m<0){m=11;y--}if(m>11){m=0;y++}state.calM=m;state.calY=y;
+    const firstWith=EVENTS.find(ev=>{const s=pd(ev.s);return s.getFullYear()===y&&s.getMonth()===m});
+    state.calD=firstWith?firstWith.s:`${y}-${String(m+1).padStart(2,"0")}-01`;render();return}
+  if(t.dataset.calday){state.calD=t.dataset.calday;render()}});
+
+/* ---------- Webinars: watch, engage, sponsor ---------- */
+const WEB_DATES=["Wed, Dec 2 · 8:00 pm ET","Wed, Dec 9 · 8:00 pm ET","Wed, Dec 16 · 8:00 pm ET","Wed, Jan 6 · 8:00 pm ET"];
+const WEBINARS={live:{t:"The Fungal Nail Advantage: Clinical Care Meets Practice Growth",date:"2026-11-18",whenTxt:"Wed, Nov 18 · 8:00 pm ET",who:"Dr. Jamie Carter, DPM, and Cody Meier, MHA",sp:"ToeFX"},
+ recs:[
+  {id:"r1",t:"The Importance of Early Intervention of the Feet & Down Syndrome",who:"Louis J. DeCaro, DPM",sp:"Nolaro"},
+  {id:"r2",t:"Tackling Chronic Tendon Pain: An NFL Team Physician's MIS Approach",who:"Dr. JP Darche",sp:"AIMx"},
+  {id:"r3",t:"The Art of Regenerative Stacking",who:"Thuy Ho-Ellsworth, DPM",sp:""},
+  {id:"r4",t:"Why Podiatry Patients Can't Find You",who:"Adil Kotadia and Lawrence Rizzo",sp:"MediaNV"},
+  {id:"r5",t:"Clinical Evidence and Real-World Results for Treating Severe Onychomycosis",who:"Dr. Patricia Nicholas and Dr. Irit Van-Ham",sp:"ToeFX"},
+  {id:"r6",t:"Optimizing Kids' Footwear: Fashion Shoes and Cleats",who:"Dr. Anne Sharkey",sp:"PowerStep"},
+  {id:"r7",t:"Mastering Objections in Regenerative Medicine",who:"Dr. Ben Weaver and panel",sp:"AIMx Podiatry"},
+  {id:"r8",t:"Mini Biomechanics Master Class",who:"Roberta Nole, MA, PT, C.Ped.",sp:"Nolaro24"}]};
+let QA=[{q:"Does laser help with thickened nails in diabetic patients?",by:"DPM · Ohio",up:12,mine:false},
+        {q:"How do you price a fungal nail program as cash pay?",by:"DPM · Texas",up:9,mine:false},
+        {q:"What's your recurrence rate at 12 months?",by:"Resident · Pennsylvania",up:4,mine:false}];
+let POLL={q:"How do you treat onychomycosis today?",opts:[["Topicals",14],["Oral antifungals",22],["Laser",9],["A combination",31]],voted:null};
+let CHAT=[["Dr. M. (FL)","Joining from the office, great topic"],["Dr. K. (NY)","Will the slides be shared after?"],["Ann (host)","Yes! Recording and slides go up in the app tomorrow."]];
+let webReg=new Set(store.get("pm_webreg",[]));
+Object.assign(state,{wtab:"qa",room:null,lead:false});
+
+V.learn=function(){
+  const w=WEBINARS.live,days=Math.round((pd(w.date)-today)/864e5),reg=webReg.has("live");
+  return `<div><h2>Webinars</h2><div class="note" style="margin-top:2px">Live Wednesdays at 8 pm ET. Clinical care and practice growth from vetted partners.</div></div>
+   ${slot("Slot D · Presenting sponsor (Practice Partner Academy)",`<div class="hero-card">
+     <h3>Next live${days>0?` · in ${days} days`:""}</h3>
+     <div style="font-weight:800;font-size:17px;line-height:1.3">${esc(w.t)}</div>
+     <div class="note">${esc(w.whenTxt)} · ${esc(w.who)}</div>
+     <div class="presented" style="padding:8px 10px"><div class="logo-ph">${esc(w.sp.slice(0,4))}</div><div>Presented by <b>${esc(w.sp)}</b></div></div>
+     <div class="actions"><button class="btn primary" data-wreg>${reg?"✓ Registered":"Register"}</button><button class="btn" data-wroom="live">Preview the live room</button></div>
+     ${reg?'<div class="note">You will get a reminder the day before and 10 minutes before it starts.</div>':'<div class="note">One tap. No forms, since the app already knows who you are.</div>'}
+   </div>`)}
+   <h3 style="margin-top:4px">Recordings</h3>
+   <div class="list">${WEBINARS.recs.map(r=>`<button class="post" data-wroom="${r.id}"><div class="post-title">${esc(r.t)}</div><div class="ev-meta">${esc(r.who)}</div>${r.sp?`<div class="badges"><span class="badge">Sponsored by ${esc(r.sp)}</span></div>`:""}</button>`).join("")}</div>
+   <h3 style="margin-top:6px">Preferred partners</h3>
+   ${slot("Slot E · Partner directory",`<div class="partners">${PARTNERS.map(p=>`<span>${p}</span>`).join("")}</div>`)}`;
+};
+
+function openRoom(id){
+  state.room=id;const live=id==="live",w=live?WEBINARS.live:WEBINARS.recs.find(r=>r.id===id),sp=w.sp||"PodiatryMeetings";
+  const total=POLL.opts.reduce((s,o)=>s+o[1],0);
+  const tab=state.wtab;
+  const body=tab==="qa"?`
+      <div class="list">${[...QA].map((x,i)=>({...x,i})).sort((a,b)=>b.up-a.up).map(x=>`<div class="qa"><button class="up" data-wup="${x.i}" aria-pressed="${!!x.mine}" aria-label="Upvote">▲<span>${x.up}</span></button><div style="min-width:0"><div style="font-weight:600">${esc(x.q)}</div><div class="note">${esc(x.by)}</div></div></div>`).join("")}</div>
+      <form class="inline-form" id="qaform"><input id="qain" placeholder="Ask the presenters a question" aria-label="Your question" required><button class="newbtn" type="submit">Ask</button></form>`
+    :tab==="poll"?`
+      <div style="font-weight:700">${esc(POLL.q)}</div>
+      <div style="display:flex;flex-direction:column;gap:8px">${POLL.opts.map(([o,n],i)=>{const pct=Math.round(n/total*100);return `<button class="vote" data-wvote="${i}" aria-pressed="${POLL.voted===i}">${POLL.voted!==null?`<i class="fillbar" style="width:${pct}%"></i>`:""}<span><span>${esc(o)}</span>${POLL.voted!==null?`<span class="money">${pct}%</span>`:""}</span></button>`}).join("")}</div>
+      <div class="note">${total} DPMs answered. ${sp} gets the aggregate results, never who voted for what.</div>`
+    :`<div style="display:flex;flex-direction:column;gap:8px">${CHAT.map(([who,m])=>`<div class="chatline"><b>${esc(who)}</b> ${esc(m)}</div>`).join("")}</div>
+      <form class="inline-form" id="chatform"><input id="chatin" placeholder="Say hello" aria-label="Chat message" required><button class="newbtn" type="submit">Send</button></form>`;
+  document.getElementById("sheetInner").innerHTML=`
+   <div class="sheet-head"><div><h3>${live?"Live room · "+esc(w.whenTxt):"Recording"}</h3><h2 style="margin-top:4px;font-size:18px">${esc(w.t)}</h2></div><button class="close" data-close aria-label="Close">✕</button></div>
+   <div class="player">
+     <span class="pb${live?"":" rec"}">${live?"LIVE PREVIEW":"RECORDING"}</span>${w.sp?`<span class="ps">Presented by ${esc(w.sp)}</span>`:""}
+     <button class="play" aria-label="Play" data-wplay>▶</button>
+     ${live?`<div class="pcap">${esc(w.who)}</div>`:slot("Slot R · Pre-roll on recordings",`<div class="preroll"><span><b>Ad · 0:05</b> Your 5-second sponsor message plays here</span><span class="note">Skip in 5</span></div>`)}
+   </div>
+   ${w.sp?`<div class="presented"><div class="logo-ph">${esc(w.sp.slice(0,4))}</div><div style="flex:1;min-width:0">Presented by <b>${esc(w.sp)}</b></div><button class="cta" style="margin:0" data-wlead>Request info</button></div>`:""}
+   ${state.lead&&w.sp?`<div class="leadbox"><div>Share your name, email and practice with <b>${esc(w.sp)}</b> so they can follow up with you.</div><div class="actions"><button class="btn primary" data-wleadsend>Share with ${esc(w.sp)}</button><button class="btn" data-wleadno>Not now</button></div></div>`:""}
+   <div class="seg" role="group" aria-label="Engage">${[["qa",`Q&amp;A (${QA.length})`],["poll","Poll"],["chat","Chat"]].map(([k,l])=>`<button data-wtab="${k}" aria-pressed="${tab===k}">${l}</button>`).join("")}</div>
+   ${body}
+   ${live?'<div class="note">Prototype: the video stream plays here in the live app. Ann moderates Q&amp;A and launches polls from her admin view.</div>':""}`;
+  document.getElementById("sheet").hidden=false;
+}
+document.addEventListener("click",e=>{if(e.target.closest("[data-wplay]"))toast("In the live app, the video plays right here")});
+document.addEventListener("click",e=>{const t=e.target.closest("[data-wreg],[data-wroom],[data-wtab],[data-wup],[data-wvote],[data-wlead],[data-wleadsend],[data-wleadno]");if(!t)return;
+  if(t.dataset.wreg!==undefined){webReg.has("live")?webReg.delete("live"):webReg.add("live");store.set("pm_webreg",[...webReg]);toast(webReg.has("live")?"Registered. We'll remind you.":"Registration canceled");render();return}
+  if(t.dataset.wroom){state.wtab="qa";state.lead=false;openRoom(t.dataset.wroom);return}
+  if(t.dataset.wtab){state.wtab=t.dataset.wtab;openRoom(state.room);return}
+  if(t.dataset.wup){const x=QA[+t.dataset.wup];x.mine=!x.mine;x.up+=x.mine?1:-1;openRoom(state.room);return}
+  if(t.dataset.wvote){if(POLL.voted===null){POLL.voted=+t.dataset.wvote;POLL.opts[POLL.voted][1]++}openRoom(state.room);return}
+  if(t.dataset.wlead!==undefined){state.lead=true;openRoom(state.room);return}
+  if(t.dataset.wleadno!==undefined){state.lead=false;openRoom(state.room);return}
+  if(t.dataset.wleadsend!==undefined){state.lead=false;openRoom(state.room);toast("Sent. They'll follow up by email.")}
+});
+document.addEventListener("submit",e=>{
+  if(e.target.id==="qaform"){e.preventDefault();const v=document.getElementById("qain").value.trim();if(v){QA.push({q:v,by:"You",up:1,mine:true});openRoom(state.room);toast("Question sent to the presenters")}}
+  if(e.target.id==="chatform"){e.preventDefault();const v=document.getElementById("chatin").value.trim();if(v){CHAT.push(["You",v]);openRoom(state.room)}}
+});
+
+/* ---------- Pricing, checkout & billing ---------- */
+const fmt=n=>(n<0?"−":"")+"$"+Math.abs(Number(n)).toLocaleString("en-US",{maximumFractionDigits:0});
+const pad=n=>String(n).padStart(2,"0");
+const isoToday=`${today.getFullYear()}-${pad(today.getMonth()+1)}-${pad(today.getDate())}`;
+const DEF_PRICES={v:2,
+ job:{hiFee:99,days:{free:30,hi:60},freeLines:6,freePhotos:0,hiPhotos:1,line:3,photo:10},
+ gear:{hiFee:49,days:{free:30,hi:60},freeLines:6,freePhotos:1,hiPhotos:8,line:2,photo:5},
+ slots:{
+  A:{n:"Meeting Calendar presented-by banner",p:750,u:"month"},
+  B:{n:"In-feed native ad in the meeting list",p:400,u:"month"},
+  C:{n:"Pre-meeting exhibitor alert",p:250,u:"meeting"},
+  G:{n:"Exhibitor spotlight on a meeting page",p:150,u:"meeting"},
+  I:{n:"Job board sponsor banner",p:500,u:"month"},
+  K:{n:"Equipment board financing partner",p:500,u:"month"},
+  F:{n:"Ann's Tips sponsor",p:300,u:"month"},
+  D:{n:"Present a live webinar (Practice Partner Academy)",p:1500,u:"webinar"},
+  R:{n:"Pre-roll on webinar recordings",p:250,u:"month"}}};
+let PRICES=(()=>{const s=store.get("pm_prices",null);return s&&s.v===2?s:JSON.parse(JSON.stringify(DEF_PRICES))})();
+const DUR=[[1,0],[3,.10],[6,.15],[12,.20]];
+let ORDERS=store.get("pm_orders2",null)||[
+ {id:"PM-1038",date:"2026-09-14",buyer:"StrideWell Orthotics (sample)",type:"Banner",item:"Meeting Calendar presented-by banner · 3 months",amt:2025,st:"Active"},
+ {id:"PM-1039",date:"2026-09-20",buyer:"Shoreline Foot Group (sample)",type:"Job listing",item:"Highlighted job · Associate Podiatrist",amt:99,st:"Active"},
+ {id:"PM-1040",date:"2026-09-28",buyer:"MedEquip Resale (sample)",type:"Equipment listing",item:"Highlighted equipment + 6 extra photos",amt:79,st:"Active"},
+ {id:"PM-1041",date:"2026-10-01",buyer:"Keystone Surgical (sample)",type:"Banner",item:"Exhibitor spotlight · SAWC Fall",amt:150,st:"Scheduled"},
+ {id:"PM-1042",date:"2026-11-03",buyer:"Arch Labs (sample)",type:"Banner",item:"In-feed native ad · 6 months",amt:2040,st:"Active"},
+ {id:"PM-1043",date:"2026-11-05",buyer:"Desert Foot Care (sample)",type:"Job listing",item:"Free job + 4 extra lines",amt:12,st:"Active"},
+ {id:"PM-1044",date:"2026-11-09",buyer:"Your practice (sample)",type:"Equipment listing",item:"Highlighted equipment · Digital X-ray system",amt:49,st:"Active",mine:true}
+];
+const saveOrders=()=>store.set("pm_orders2",ORDERS);
+let seq=Math.max(...ORDERS.map(o=>+o.id.split("-")[1]))+1;
+Object.assign(state,{acct:"advertise"});
+
+const countLines=t=>t.trim()?t.trim().split("\n").reduce((n,l)=>n+Math.max(1,Math.ceil(l.length/45)),0):0;
+function quote(kind,tier,lines,photos){
+  const P=PRICES[kind],hi=tier==="hi",inclL=hi?P.freeLines*2:P.freeLines,inclP=hi?P.hiPhotos:P.freePhotos;
+  const xl=Math.max(0,lines-inclL),xp=Math.max(0,photos-inclP),items=[[hi?`Highlighted listing · ${P.days.hi} days`:`Free listing · ${P.days.free} days`,hi?+P.hiFee:0]];
+  if(xl)items.push([`${xl} extra line${xl>1?"s":""} × ${fmt(P.line)}`,xl*P.line]);
+  if(xp)items.push([`${xp} extra photo${xp>1?"s":""} × ${fmt(P.photo)}`,xp*P.photo]);
+  return {items,total:items.reduce((s,i)=>s+i[1],0),inclL,inclP};
+}
+const sumBox=q=>`<div class="sum">${q.items.map(([k,v])=>`<div class="row"><span>${esc(k)}</span><span>${fmt(v)}</span></div>`).join("")}<div class="row tot"><span>Total</span><span>${fmt(q.total)}</span></div></div>`;
+
+openNew=function(kind){
+  const job=kind==="job",P=PRICES[kind];
+  document.getElementById("sheetInner").innerHTML=`
+   <div class="sheet-head"><div><h3>${job?"Hiring?":"Selling?"}</h3><h2 style="margin-top:4px">${job?"Post a job":"List equipment"}</h2></div><button class="close" data-close aria-label="Close">✕</button></div>
+   <form id="postform2" data-kind="${kind}" style="display:flex;flex-direction:column;gap:12px">
+     <div class="radios" role="radiogroup" aria-label="Listing type">
+       <label><input type="radio" name="tier2" value="free" checked><span><b>Free</b> · ${P.days.free} days, ${P.freeLines} lines${P.freePhotos?`, ${P.freePhotos} photo`:""} included</span></label>
+       <label><input type="radio" name="tier2" value="hi"><span><b>Highlighted · ${fmt(P.hiFee)}</b> · pinned to the top for ${P.days.hi} days, ${P.freeLines*2} lines, ${P.hiPhotos} ${job?"logo":"photos"} included</span></label>
+     </div>
+     <div class="field"><label class="note" for="pt">${job?"Job title":"What are you selling?"}</label><input id="pt" required placeholder="${job?"e.g. Associate Podiatrist":"e.g. Digital X-ray system"}"></div>
+     <div class="field"><label class="note" for="po">${job?"Practice description":"Condition"}</label>${job?'<input id="po" placeholder="e.g. 2-doctor practice">':'<select id="po"><option>Used, excellent</option><option>Used, good</option><option>Refurbished</option><option>Demo unit</option><option>New</option></select>'}</div>
+     ${job?'<div class="field"><label class="note" for="pr">Role</label><select id="pr"><option value="dpm">DPM</option><option value="staff">Staff</option><option value="locum">Locum & part-time</option></select></div>'
+          :`<div class="field"><label class="note" for="pr">Category</label><select id="pr">${Object.entries(CAT).map(([k,v])=>`<option value="${k}">${v}</option>`).join("")}</select></div>`}
+     <div class="field"><label class="note" for="pl">Location</label><input id="pl" required placeholder="City, state"></div>
+     <div class="field"><label class="note" for="pp">${job?"Pay":"Asking price"}</label><input id="pp" placeholder="${job?"e.g. $160k + bonus":"e.g. $4,500"}"></div>
+     <div class="field"><label class="note" for="pd">Details · <span id="lc"></span></label><textarea id="pd" rows="4" placeholder="Each extra line past what your tier includes is ${fmt(P.line)}"></textarea></div>
+     <div class="field"><label class="note" for="ph">${job?"Logo or photos":"Photos"} · ${fmt(P.photo)} each past what your tier includes</label><input id="ph" type="file" accept="image/*" multiple style="border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:8px"></div>
+     <fieldset class="prem" id="prem2" disabled>
+       <legend>🔒 Included with Highlighted</legend>
+       <div class="field"><label class="note" for="pw">${job?"Direct application link":"Website or spec sheet link"}</label><input id="pw" type="url" placeholder="https://"></div>
+       <div class="field"><label class="note" for="pv">${job?"Show pay range on the card":"Show phone number on the listing"}</label><select id="pv"><option>Yes</option><option>No</option></select></div>
+     </fieldset>
+     <div id="sum2"></div>
+     <button class="btn primary" id="psubmit" type="submit"></button>
+   </form>`;
+  document.getElementById("sheet").hidden=false;updateQuote();
+};
+function updateQuote(){
+  const f=document.getElementById("postform2");if(!f)return;
+  const tier=f.querySelector('input[name="tier2"]:checked').value,lines=countLines(document.getElementById("pd").value),photos=document.getElementById("ph").files.length;
+  const q=quote(f.dataset.kind,tier,lines,photos);f._q=q;f._tier=tier;
+  document.getElementById("sum2").innerHTML=sumBox(q);
+  document.getElementById("lc").textContent=`${lines} of ${q.inclL} lines included`;
+  document.getElementById("prem2").disabled=tier!=="hi";
+  document.getElementById("psubmit").textContent=q.total?`Continue to payment · ${fmt(q.total)}`:"Post free listing";
+}
+document.addEventListener("input",e=>{if(e.target.closest&&e.target.closest("#postform2"))updateQuote()});
+document.addEventListener("change",e=>{if(e.target.closest&&e.target.closest("#postform2"))updateQuote();if(e.target.closest&&e.target.closest("#slotform"))updateSlotQuote()});
+document.addEventListener("submit",e=>{if(e.target.id!=="postform2")return;e.preventDefault();
+  const f=e.target,kind=f.dataset.kind,job=kind==="job",g=i=>document.getElementById(i).value.trim(),q=f._q,hi=f._tier==="hi";
+  const base={id:Date.now(),t:g("pt"),loc:g("pl"),d:0,f:hi,desc:g("pd")||"No details provided."};
+  const listing=job?{...base,co:g("po")||"Podiatry practice",role:g("pr"),type:{dpm:"Full-time",staff:"Full-time",locum:"Part-time"}[g("pr")],pay:g("pp")||"Not listed",tags:[]}
+                   :{...base,cond:g("po"),cat:g("pr"),price:g("pp")||"Make an offer",seller:"You"};
+  const publish=()=>{(job?JOBS:GEAR).push(listing);state[job?"jf":"gf"]="all";state[job?"jq":"gq"]="";state.tab=job?"jobs":"gear";render()};
+  if(!q.total){publish();closeSheet();toast("Your free listing is live");return}
+  openCheckout({type:job?"Job listing":"Equipment listing",item:`${hi?"Highlighted":"Free"} ${job?"job":"equipment"} · ${listing.t}`,items:q.items,total:q.total},publish);
+});
+
+let pending=null;
+function openCheckout(o,onPaid){
+  pending={o,onPaid};
+  document.getElementById("sheetInner").innerHTML=`
+   <div class="sheet-head"><div><h3>Checkout</h3><h2 style="margin-top:4px">Review and pay</h2></div><button class="close" data-close aria-label="Close">✕</button></div>
+   ${sumBox(o)}
+   <form id="payform" style="display:flex;flex-direction:column;gap:12px">
+     <div class="field"><label class="note" for="cname">Bill to (practice or company)</label><input id="cname" required placeholder="e.g. Shoreline Foot Group"></div>
+     <div class="field"><label class="note" for="cemail">Billing email</label><input id="cemail" type="email" required placeholder="billing@yourpractice.com"></div>
+     <div class="radios" role="radiogroup" aria-label="Payment method">
+       <label><input type="radio" name="pm" value="card" checked><span><b>Card or Apple Pay</b> · charged now</span></label>
+       <label><input type="radio" name="pm" value="invoice"><span><b>Invoice my company</b> · net 30, for vendors and agencies</span></label>
+     </div>
+     <button class="btn primary" id="paybtn" type="submit">Pay ${fmt(o.total)}</button>
+     <div class="note">Prototype: no payment is taken. The live app hands off to Stripe here, so card numbers never touch PodiatryMeetings.com.</div>
+   </form>`;
+  document.getElementById("sheet").hidden=false;
+}
+document.addEventListener("submit",e=>{if(e.target.id!=="payform"||!pending)return;e.preventDefault();
+  const b=document.getElementById("paybtn");b.disabled=true;b.textContent="Processing…";
+  const inv=e.target.querySelector('input[name="pm"]:checked').value==="invoice",buyer=document.getElementById("cname").value.trim();
+  setTimeout(()=>{const{o,onPaid}=pending;pending=null;
+    const ord={id:"PM-"+(seq++),date:isoToday,buyer,type:o.type,item:o.item,amt:o.total,st:inv?"Invoiced":"Active",mine:true};
+    ORDERS.unshift(ord);saveOrders();onPaid&&onPaid();openReceipt(ord.id,true)},900);
+});
+function openReceipt(id,fresh){
+  const o=ORDERS.find(x=>x.id===id);
+  document.getElementById("sheetInner").innerHTML=`
+   <div class="sheet-head"><div><h3>${fresh?(o.st==="Invoiced"?"Invoice created":"Payment received"):"Receipt"}</h3><h2 style="margin-top:4px">${o.id}</h2></div><button class="close" data-close aria-label="Close">✕</button></div>
+   ${fresh?`<div class="paid" aria-hidden="true">✓</div>`:""}
+   <div class="facts">
+     <div class="fact"><span>Item</span><span>${esc(o.item)}</span></div>
+     <div class="fact"><span>Bill to</span><span>${esc(o.buyer)}</span></div>
+     <div class="fact"><span>Date</span><span>${o.date}</span></div>
+     <div class="fact"><span>Amount</span><span class="money">${fmt(o.amt)}</span></div>
+     <div class="fact"><span>Status</span><span>${o.st}${o.st==="Invoiced"?" · due in 30 days":""}</span></div>
+   </div>
+   <div class="note">Every receipt stays under Advertise → My billing.</div>
+   <button class="btn primary" data-close>Done</button>`;
+  document.getElementById("sheet").hidden=false;
+}
+
+function openBuySlot(L){
+  const s=PRICES.slots[L],month=s.u==="month";
+  const up=EVENTS.filter(e=>pd(e.s)>=today);
+  document.getElementById("sheetInner").innerHTML=`
+   <div class="sheet-head"><div><h3>Ad slot ${L}</h3><h2 style="margin-top:4px">${esc(s.n)}</h2></div><button class="close" data-close aria-label="Close">✕</button></div>
+   <form id="slotform" data-slot="${L}" style="display:flex;flex-direction:column;gap:12px">
+     ${month?`<div class="field"><label class="note" for="sd">How long?</label><select id="sd">${DUR.map(([m,d])=>`<option value="${m}">${m} month${m>1?"s":""}${d?` · save ${d*100}%`:""}</option>`).join("")}</select></div>
+              <div class="field"><label class="note" for="ss">Start date</label><input id="ss" type="date" value="${isoToday}" min="${isoToday}"></div>`
+            :s.u==="webinar"?`<div class="field"><label class="note" for="sw">Which Wednesday?</label><select id="sw">${WEB_DATES.map(d=>`<option>${d}</option>`).join("")}</select></div>
+              <div class="note">Your team presents live to DPMs. You get the attendee list of doctors who opt in, every Q&amp;A question, poll results, and the recording with your branding.</div>`
+            :`<div class="field"><label class="note" for="sm">Which meeting?</label><select id="sm">${up.map(e=>`<option value="${e.id}">${esc(e.t)} · ${range(e)}</option>`).join("")}</select></div>`}
+     <div class="field"><label class="note" for="sc">Ad artwork or logo</label><input id="sc" type="file" accept="image/*" style="border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:8px"></div>
+     <div class="field"><label class="note" for="su">Where should taps go?</label><input id="su" type="url" placeholder="https://yourcompany.com/offer"></div>
+     <div id="slotsum"></div>
+     <button class="btn primary" type="submit" id="slotbtn"></button>
+   </form>`;
+  document.getElementById("sheet").hidden=false;updateSlotQuote();
+}
+function slotQuote(L){
+  const s=PRICES.slots[L];
+  if(s.u==="webinar"){const d=document.getElementById("sw").value;return{items:[[`Live webinar · ${d}`,+s.p]],total:+s.p,label:`Live webinar · ${d}`}}
+  if(s.u!=="month"){const e=EVENTS.find(x=>x.id==document.getElementById("sm").value);return{items:[[`${s.n} · ${e?e.t:"meeting"}`,+s.p]],total:+s.p,label:`${s.n} · ${e?e.t:""}`}}
+  const m=+document.getElementById("sd").value,d=DUR.find(x=>x[0]===m)[1],gross=s.p*m,items=[[`${fmt(s.p)}/month × ${m}`,gross]];
+  if(d)items.push([`Multi-month discount (${d*100}%)`,-Math.round(gross*d)]);
+  return{items,total:items.reduce((a,i)=>a+i[1],0),label:`${s.n} · ${m} month${m>1?"s":""}`};
+}
+function updateSlotQuote(){const f=document.getElementById("slotform");if(!f)return;const q=slotQuote(f.dataset.slot);f._q=q;
+  document.getElementById("slotsum").innerHTML=sumBox(q);document.getElementById("slotbtn").textContent=`Continue to payment · ${fmt(q.total)}`}
+document.addEventListener("submit",e=>{if(e.target.id!=="slotform")return;e.preventDefault();const q=e.target._q;
+  openCheckout({type:"Banner",item:q.label,items:q.items,total:q.total},()=>{if(state.tab==="account")render()})});
+
+V.account=function(){
+  const seg=`<div class="seg" role="group" aria-label="Section">${[["advertise","Buy ads"],["billing","My billing"],["admin","Admin"]].map(([k,l])=>`<button data-acct="${k}" aria-pressed="${state.acct===k}">${l}</button>`).join("")}</div>`;
+  if(state.acct==="advertise")return `<div><h2>Advertise to DPMs</h2><div class="note" style="margin-top:2px">Book and pay for placements right in the app.</div></div>${seg}
+    <div class="list">${Object.entries(PRICES.slots).map(([L,s])=>`<div class="slotcard"><div class="L">${L}</div><div style="min-width:0"><div class="nm">${esc(s.n)}</div><div class="note"><span class="money">${fmt(s.p)}</span> per ${s.u}</div></div><button class="buy" data-buyslot="${L}">Buy</button></div>`).join("")}</div>
+    <div class="note">Tip: tap <b>Ad slots</b> in the header to see where each placement appears, then tap any outlined slot to buy it.</div>
+    <h3>Listings</h3>
+    <div class="sum"><div class="row"><span>Job post, free tier</span><span>${fmt(0)}</span></div><div class="row"><span>Highlighted job</span><span>${fmt(PRICES.job.hiFee)}</span></div><div class="row"><span>Equipment, free tier</span><span>${fmt(0)}</span></div><div class="row"><span>Highlighted equipment</span><span>${fmt(PRICES.gear.hiFee)}</span></div><div class="row"><span>Extra line (jobs / equipment)</span><span>${fmt(PRICES.job.line)} / ${fmt(PRICES.gear.line)}</span></div><div class="row"><span>Extra photo (jobs / equipment)</span><span>${fmt(PRICES.job.photo)} / ${fmt(PRICES.gear.photo)}</span></div></div>`;
+  if(state.acct==="billing"){const mine=ORDERS.filter(o=>o.mine),spent=mine.reduce((s,o)=>s+o.amt,0);
+    return `<div><h2>My billing</h2><div class="note" style="margin-top:2px">Everything you've paid for, in one place.</div></div>${seg}
+     <div class="kpis"><div class="kpi"><div class="v">${fmt(spent)}</div><div class="k">Total spent</div></div><div class="kpi"><div class="v">${mine.filter(o=>o.st==="Active").length}</div><div class="k">Active</div></div><div class="kpi"><div class="v">${mine.filter(o=>o.st==="Invoiced").length}</div><div class="k">Invoices open</div></div></div>
+     <div class="list">${mine.map(o=>`<button class="post" data-receipt="${o.id}"><div class="post-top"><div class="post-title">${esc(o.item)}</div><div class="price">${fmt(o.amt)}</div></div><div class="ev-meta">${o.id} · ${o.date} · ${o.type}</div><div class="badges"><span class="status">${o.st}</span></div></button>`).join("")||'<div class="empty">No purchases yet. Post a highlighted listing or buy an ad slot and your receipt shows up here.</div>'}</div>`}
+  const mo=isoToday.slice(0,7),all=ORDERS.reduce((s,o)=>s+o.amt,0),month=ORDERS.filter(o=>o.date.startsWith(mo)).reduce((s,o)=>s+o.amt,0);
+  const by={};ORDERS.forEach(o=>by[o.type]=(by[o.type]||0)+o.amt);const max=Math.max(...Object.values(by),1);
+  const pin=(path,label)=>`<label for="pz-${path}">${label}</label><input id="pz-${path}" inputmode="numeric" data-price="${path}" value="${path.split(".").reduce((o,k)=>o[k],PRICES)}">`;
+  return `<div><h2>Admin</h2><div class="note" style="margin-top:2px">Ann's view: app revenue, orders and prices. Hidden from doctors and vendors in the live app.</div></div>${seg}
+   <div class="kpis"><div class="kpi"><div class="v">${fmt(all)}</div><div class="k">App revenue</div></div><div class="kpi"><div class="v">${fmt(month)}</div><div class="k">This month</div></div><div class="kpi"><div class="v">${ORDERS.length}</div><div class="k">Orders</div></div></div>
+   <h3>Revenue by product</h3>
+   <div class="bars">${Object.entries(by).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`<div class="bar"><span>${k}</span><div class="track"><div class="fill" style="width:${Math.max(3,v/max*100)}%"></div></div><span class="money">${fmt(v)}</span></div>`).join("")}</div>
+   <h3>Orders</h3>
+   <div class="tbl"><table><thead><tr><th>Order</th><th>Date</th><th>Customer</th><th>Item</th><th>Status</th><th style="text-align:right">Amount</th></tr></thead><tbody>${ORDERS.map(o=>`<tr><td>${o.id}</td><td>${o.date}</td><td>${esc(o.buyer)}</td><td>${esc(o.item)}</td><td><span class="status">${o.st}</span></td><td class="money">${fmt(o.amt)}</td></tr>`).join("")}</tbody></table></div>
+   <h3>Price list</h3>
+   <div class="pricegrid">
+     <h4>Jobs</h4>${pin("job.hiFee","Highlighted fee")}${pin("job.line","Per extra line")}${pin("job.photo","Per extra photo")}${pin("job.freeLines","Lines included free")}
+     <h4>Equipment</h4>${pin("gear.hiFee","Highlighted fee")}${pin("gear.line","Per extra line")}${pin("gear.photo","Per extra photo")}${pin("gear.freePhotos","Photos included free")}${pin("gear.hiPhotos","Photos with Highlighted")}
+     <h4>Ad slots</h4>${Object.entries(PRICES.slots).map(([L,s])=>pin(`slots.${L}.p`,`${L} · ${s.n} (per ${s.u})`)).join("")}
+   </div>
+   <div class="note">Price changes apply to new orders right away.</div>`;
+};
+
+document.addEventListener("change",e=>{const p=e.target.dataset&&e.target.dataset.price;if(!p)return;const v=Math.max(0,Math.round(+e.target.value||0));e.target.value=v;
+  const keys=p.split("."),last=keys.pop();keys.reduce((o,k)=>o[k],PRICES)[last]=v;store.set("pm_prices",PRICES);toast("Price updated")});
+document.addEventListener("click",e=>{const t=e.target.closest("[data-acct],[data-buyslot],[data-receipt]");if(!t)return;
+  if(t.dataset.acct){state.acct=t.dataset.acct;render();return}
+  if(t.dataset.buyslot){openBuySlot(t.dataset.buyslot);return}
+  if(t.dataset.receipt)openReceipt(t.dataset.receipt)});
+document.addEventListener("click",e=>{if(!document.body.classList.contains("show-slots"))return;const s=e.target.closest(".slot");if(!s)return;
+  const tag=s.querySelector(".slot-tag"),L=tag&&(tag.textContent.match(/^Slot (\w)/)||[])[1];
+  if(L&&PRICES.slots[L]){e.preventDefault();e.stopPropagation();openBuySlot(L)}},true);
+
+function render(){
+  document.getElementById("view").innerHTML=V[state.tab]();
+  document.querySelectorAll(".tab").forEach(t=>t.setAttribute("aria-selected",t.dataset.tab===state.tab));
+  const q=document.getElementById("q");
+  if(q)q.addEventListener("input",e=>{state.q=e.target.value;const pos=e.target.selectionStart;render();const n=document.getElementById("q");n.focus();n.setSelectionRange(pos,pos)});
+}
+function toast(m){const t=document.getElementById("toast");t.textContent=m;t.hidden=false;clearTimeout(t._h);t._h=setTimeout(()=>t.hidden=true,1800)}
+function gcal(e){const b=pd(e.e);b.setDate(b.getDate()+1);const f=d=>`${d.getFullYear()}${String(d.getMonth()+1).padStart(2,"0")}${String(d.getDate()).padStart(2,"0")}`;
+  return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(e.t)}&dates=${f(pd(e.s))}/${f(b)}&location=${encodeURIComponent((e.venue?e.venue+", ":"")+e.city+", "+e.st)}&details=${encodeURIComponent(e.url)}`}
+
+function openEvent(id){
+  const e=EVENTS.find(x=>x.id==id),on=saved.has(e.id);
+  document.getElementById("sheetInner").innerHTML=`
+   <div class="sheet-head"><div><h3>${isLive(e)?"Happening now":daysTo(e)>0?"In "+daysTo(e)+" days":"Meeting"}</h3><h2 style="margin-top:4px">${esc(e.t)}</h2></div><button class="close" data-close aria-label="Close">✕</button></div>
+   <div class="facts">
+     <div class="fact"><span>Dates</span><span>${range(e)}, ${pd(e.s).getFullYear()}</span></div>
+     <div class="fact"><span>Where</span><span>${e.venue?esc(e.venue)+"<br>":""}${esc(e.city)}, ${esc(e.st)}</span></div>
+     ${e.org?`<div class="fact"><span>Host</span><span>${esc(e.org)}</span></div>`:""}
+     <div class="fact"><span>CECH</span><span>${esc(e.ce||"See meeting website")}</span></div>
+   </div>
+   <div class="actions">
+     <button class="btn primary" data-save="${e.id}" aria-pressed="${on}">${on?"★ Saved":"☆ Save"}</button>
+     <a class="btn" href="${gcal(e)}" target="_blank" rel="noopener">Add to calendar</a>
+     <a class="btn" style="grid-column:1/-1" href="${e.web}" target="_blank" rel="noopener">Meeting website</a>
+   </div>
+   ${sponsorCard("Slot G · Exhibitor spotlight on meeting page","Exhibiting here · sample","Visit our booth at this meeting","Exhibitors buy the meeting pages where their booth is.","Get directions to booth")}
+   <a class="note" href="${e.url}" target="_blank" rel="noopener">View on PodiatryMeetings.com</a>`;
+  document.getElementById("sheet").hidden=false;
+}
+function closeSheet(){document.getElementById("sheet").hidden=true}
+
+document.addEventListener("click",ev=>{
+  const t=ev.target.closest("[data-tab],[data-filter],[data-save],[data-open],[data-close],[data-star],[data-goreview],[data-ad],#adToggle,#sheet");
+  if(!t)return;
+  if(t.id==="adToggle"){const on=t.getAttribute("aria-pressed")!=="true";t.setAttribute("aria-pressed",on);document.body.classList.toggle("show-slots",on);toast(on?"Tap any outlined slot to buy it":"Ad slots hidden");return}
+  if(t.dataset.save){ev.stopPropagation();const id=+t.dataset.save;saved.has(id)?saved.delete(id):saved.add(id);store.set("pm_saved2",[...saved]);toast(saved.has(id)?"Saved to My Meetings":"Removed from My Meetings");
+    if(!document.getElementById("sheet").hidden)openEvent(id);render();return}
+  if(t.dataset.tab){state.tab=t.dataset.tab;store.set("pm_tab",state.tab);render();window.scrollTo(0,0);return}
+  if(t.dataset.filter){state.filter=t.dataset.filter;render();return}
+  if(t.dataset.open){openEvent(t.dataset.open);return}
+  if(t.dataset.close!==undefined||t.id==="sheet"&&ev.target===t){closeSheet();return}
+  if(t.dataset.goreview){closeSheet();state.tab="reviews";render();document.getElementById("rmeet").value=t.dataset.goreview;window.scrollTo(0,0);return}
+  if(t.dataset.star){const n=+t.dataset.star;document.querySelectorAll(".star").forEach(s=>s.classList.toggle("on",+s.dataset.star<=n));document.getElementById("stars").dataset.v=n;return}
+  if(t.dataset.ad!==undefined){toast("Sample placement. Advertiser link goes here.");return}
+});
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeSheet();if(e.key==="Enter"&&e.target.dataset&&e.target.dataset.open)openEvent(e.target.dataset.open)});
+document.addEventListener("submit",e=>{e.preventDefault();
+  if(e.target.id==="rate"){if(!document.getElementById("stars").dataset.v){toast("Pick a star rating first");return}toast("Thanks! Review submitted");e.target.reset();document.querySelectorAll(".star").forEach(s=>s.classList.remove("on"));delete document.getElementById("stars").dataset.v}
+  if(e.target.id==="signup"){toast("You're on the list");e.target.reset()}
+});
+render();
+</script>
+
+</body></html>
