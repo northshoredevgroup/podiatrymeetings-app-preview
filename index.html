@@ -150,7 +150,7 @@ select,textarea{width:100%;border:1px solid var(--line);background:var(--surface
 
 nav.tabs{position:fixed;bottom:0;left:0;right:0;z-index:10;background:var(--surface);border-top:1px solid var(--line);
   padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px))}
-nav.tabs div{max-width:480px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr)}
+nav.tabs div{max-width:480px;margin:0 auto;display:grid;grid-template-columns:repeat(6,1fr)}
 .seg{display:grid;grid-template-columns:repeat(3,1fr);background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:3px;gap:3px}
 .seg button{border:none;background:none;border-radius:7px;padding:8px 4px;font-weight:700;font-size:13px;cursor:pointer;color:var(--muted)}
 .seg button[aria-pressed="true"]{background:var(--plum);color:#fff}
@@ -228,7 +228,7 @@ nav.tabs div{max-width:480px;margin:0 auto;display:grid;grid-template-columns:re
 .prem:disabled{opacity:.5;border-color:var(--line)}
 .prem:disabled legend{color:var(--muted)}
 .prem input{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:10px;padding:10px;font:inherit;min-width:0}
-.tab{background:none;border:none;cursor:pointer;padding:6px 2px;font-size:11.5px;font-weight:600;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:3px}
+.tab{background:none;border:none;cursor:pointer;padding:6px 0;font-size:10.5px;font-weight:600;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:3px}
 .tab svg{width:22px;height:22px}
 .tab[aria-selected="true"]{color:var(--ink)}
 .tab[aria-selected="true"] svg{color:var(--teal)}
@@ -239,6 +239,16 @@ nav.tabs div{max-width:480px;margin:0 auto;display:grid;grid-template-columns:re
 .post-top{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
 .post-title{font-weight:700;font-size:15px;line-height:1.3;min-width:0}
 .price{font-family:var(--f-mono);font-weight:500;color:var(--plum);white-space:nowrap;font-variant-numeric:tabular-nums}
+.letter{display:flex;flex-direction:column;gap:5px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px;cursor:pointer;text-align:left;width:100%}
+.letter .re{font-size:11px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--plum)}
+.letter .lt{font-weight:800;font-size:15.5px;line-height:1.3}
+.letter .ex{font-size:13.5px;color:var(--ink-2);line-height:1.45;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.badge.vet{background:#E8F5EE;color:#17663F}
+.reply{border-left:3px solid var(--line);padding:4px 0 4px 10px;display:flex;flex-direction:column;gap:3px}
+.pollbar{position:relative;border:1px solid var(--line);border-radius:10px;padding:9px 12px;background:var(--surface);text-align:left;width:100%;cursor:pointer;overflow:hidden;font-weight:600}
+.pollbar i{position:absolute;inset:0 auto 0 0;background:var(--blush,#FBF2F6);z-index:0}
+.pollbar span{position:relative;z-index:1;display:flex;justify-content:space-between;gap:8px}
+.rules{background:var(--bg);border-radius:12px;padding:10px 12px;font-size:12.5px;color:var(--ink-2);line-height:1.5}
 .badge.feat{background:var(--grad);color:#fff}
 .newbtn{border:none;border-radius:4px;background:var(--grad);color:#fff;font-weight:700;padding:9px 14px;cursor:pointer;font-size:13.5px}
 .field{display:flex;flex-direction:column;gap:4px}
@@ -265,6 +275,7 @@ nav.tabs div{max-width:480px;margin:0 auto;display:grid;grid-template-columns:re
   <button class="tab" role="tab" data-tab="meetings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Meetings</button>
   <button class="tab" role="tab" data-tab="jobs"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2M3 13h18"/></svg>Jobs</button>
   <button class="tab" role="tab" data-tab="gear"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.6 13.4l-7.2 7.2a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg>Equipment</button>
+  <button class="tab" role="tab" data-tab="voices"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1.1-4.6A8 8 0 1 1 21 12z"/><path d="M8.5 10.5h7M8.5 14h4.5"/></svg>Voices</button>
   <button class="tab" role="tab" data-tab="more"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M10 8l4 2-4 2z"/><path d="M8 20h8"/></svg>Learn</button>
   <button class="tab" role="tab" data-tab="account"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4"/></svg>Advertise</button>
 </div></nav>
@@ -557,6 +568,85 @@ Object.assign(V,{
  gear(){return board("gear")},
  more(){return V.learn()+V.tips()}
 });
+
+/* ---------- Voices: vetted letters from DPMs ---------- */
+const VTOPICS={all:"All",biz:"Practice & business",pay:"Reimbursement",scope:"Scope & training",clin:"Clinical",life:"Life in practice"};
+const LETTERS=[
+ {id:1,top:"pay",t:"Another round of Medicare cuts: what are you actually doing about it?",by:"Sample DPM",loc:"Albany, NY",d:1,
+  body:"Every year we brace for the fee schedule, write the letters and absorb the cut. I have started tracking my true cost per visit and dropping two plans that pay below it. I would like to hear what has worked for others: renegotiating, joining a group, going cash for certain services, or something else.",
+  replies:[["Sample DPM, Tampa, FL","Dropping the lowest-paying plan was the best decision I made last year. Volume dipped for three months, then the schedule refilled with better-paying patients."],["Sample DPM, Columbus, OH","Joined a regional IPA in 2024. Better contracts, but you give up some control. Happy to compare notes."]]},
+ {id:2,top:"scope",t:"Should our curriculum look more like general medicine?",by:"Sample DPM",loc:"Buffalo, NY",d:2,
+  body:"Residents tell me they feel ready in the OR but less ready for the medically complex patient in front of them. More internal medicine, physical diagnosis and pharmacology would help us earn the recognition we keep asking for.",
+  replies:[["Sample DPM, Chicago, IL","Agree on the medicine, but not at the cost of surgical training. Fourth year could do more of both."]]},
+ {id:3,top:"biz",t:"Private practice or employed? Five years in, my honest take",by:"Sample DPM",loc:"Denver, CO",d:3,
+  body:"I sold to a hospital group in 2021. The salary is steady and I never think about payroll, but I see more patients for less control over my schedule. For anyone weighing an offer, here is what I wish I had negotiated.",
+  replies:[]},
+ {id:4,top:"life",t:"Last week's IT outage shut our office for a day. Do you have a backup plan?",by:"Sample DPM",loc:"Phoenix, AZ",d:4,
+  body:"Our EHR and phones went down and we were rescheduling by hand from a printed schedule. We now print the next day's schedule every evening and keep a paper superbill pad. What else should a small office have ready?",
+  replies:[["Sample practice manager, Austin, TX","A cellular hotspot and a laptop that doesn't depend on the office network. Cheap insurance."]]},
+ {id:5,top:"clin",t:"Referring psoriatic nails to dermatology: when do you do it?",by:"Sample DPM",loc:"Delray Beach, FL",d:5,
+  body:"Most nail disease I treat myself, but once I suspect psoriasis I send the patient to dermatology for systemic workup. Curious where colleagues draw the line and how you keep the patient coming back to you for the feet.",
+  replies:[]}];
+let VQ=store.get("pm_vq",{voted:null});
+const VPOLL={q:"Has a prior authorization delayed a patient's care in the last month?",opts:[["Yes, more than once",58],["Once",21],["No",14],["I don't take plans that require it",7]],last:"Last week: 61% said they were hit by the IT outage."};
+let VPENDING=store.get("pm_vpending",[]);
+Object.assign(state,{vt:"all"});
+
+V.voices=function(){
+  const list=LETTERS.filter(l=>state.vt==="all"||l.top===state.vt);
+  const total=VPOLL.opts.reduce((a,o)=>a+o[1],0)+(VQ.voted!=null?1:0);
+  const poll=`<div class="hero-card"><h3>Quick Poll · this week</h3><div style="font-weight:800;font-size:16px;line-height:1.3">${esc(VPOLL.q)}</div>
+    <div class="list" style="gap:6px">${VPOLL.opts.map(([o,n],i)=>{const v=n+(VQ.voted===i?1:0),pct=Math.round(v/total*100);
+      return `<button class="pollbar" data-vvote="${i}">${VQ.voted!=null?`<i style="width:${pct}%"></i>`:""}<span><span>${VQ.voted===i?"✓ ":""}${esc(o)}</span>${VQ.voted!=null?`<b>${pct}%</b>`:""}</span></button>`}).join("")}</div>
+    <div class="note">${VQ.voted!=null?`${total} DPMs answered. Results go out in Friday's digest.`:"One tap. Results show right after you vote."} ${esc(VPOLL.last)}</div></div>`;
+  const rows=[];list.forEach((l,i)=>{rows.push(`<button class="letter" data-vopen="${l.id}"><div class="re">RE: ${esc(VTOPICS[l.top])}</div><div class="lt">${esc(l.t)}</div><div class="ex">${esc(l.body)}</div>
+    <div class="badges"><span class="badge vet">✓ Reviewed by Ann</span><span class="badge">${esc(l.by)} · ${esc(l.loc)}</span><span class="badge">${l.replies.length} ${l.replies.length===1?"reply":"replies"}</span><span class="badge intl">${l.d}d ago</span></div></button>`);
+    if(i===1)rows.push(sponsorCard("Slot W · Ad between letters","Sponsored · sample","Your message in the conversation","Seen by DPMs while they read what their colleagues think.","Learn more"))});
+  return `${slot("Slot V · Voices presented-by banner",`<div class="presented"><div class="logo-ph">LOGO</div><div>Voices <b>presented by</b> your partner here</div></div>`)}
+   <div class="board-head"><div><h2>Voices</h2><div class="note" style="margin-top:2px">Letters and replies from DPMs. Ann reads every one before it goes up.</div></div>
+     <button class="newbtn" data-vwrite="0">Write a letter</button></div>
+   ${VPENDING.length?`<div class="note" style="background:var(--bg);border-radius:10px;padding:8px 10px">⏳ ${VPENDING.length} of your posts waiting for Ann's review.</div>`:""}
+   ${slot("Slot Q · Quick Poll sponsor",poll)}
+   <div class="chips" role="group" aria-label="Topic">${Object.entries(VTOPICS).map(([k,v])=>`<button class="chip" data-vtopic="${k}" aria-pressed="${state.vt===k}">${v}</button>`).join("")}</div>
+   <div class="list">${rows.join("")||'<div class="empty">No letters on this topic yet. Be the first to write one.</div>'}</div>
+   <div class="note">Sample letters for the prototype. Names and posts are not real.</div>`;
+};
+function openLetter(id){
+  const l=LETTERS.find(x=>x.id==id);
+  document.getElementById("sheetInner").innerHTML=`
+   <div class="sheet-head"><div><h3>RE: ${esc(VTOPICS[l.top])}</h3><h2 style="margin-top:4px">${esc(l.t)}</h2></div><button class="close" data-close aria-label="Close">✕</button></div>
+   <div class="note">${esc(l.by)} · ${esc(l.loc)} · ${l.d}d ago · <span class="badge vet">✓ Reviewed by Ann</span></div>
+   <p style="margin:0;line-height:1.55">${esc(l.body)}</p>
+   <h3 style="margin-top:4px">${l.replies.length?`Replies (${l.replies.length})`:"No replies yet"}</h3>
+   ${l.replies.map(([w,t])=>`<div class="reply"><b style="font-size:13px">${esc(w)}</b><span style="font-size:14px;line-height:1.5">${esc(t)}</span></div>`).join("")}
+   <div class="actions"><button class="btn primary" data-vwrite="${l.id}">Reply</button><button class="btn" data-close>Back to Voices</button></div>`;
+  document.getElementById("sheet").hidden=false;
+}
+function openVWrite(id){
+  const l=id?LETTERS.find(x=>x.id==id):null;
+  document.getElementById("sheetInner").innerHTML=`
+   <div class="sheet-head"><div><h3>${l?"Reply":"New letter"}</h3><h2 style="margin-top:4px">${l?esc(l.t):"Write to your colleagues"}</h2></div><button class="close" data-close aria-label="Close">✕</button></div>
+   <form id="vform" data-reply="${l?l.id:""}" style="display:flex;flex-direction:column;gap:12px">
+     ${l?"":`<div class="field"><label class="note" for="vtop">Topic</label><select id="vtop">${Object.entries(VTOPICS).filter(([k])=>k!=="all").map(([k,v])=>`<option value="${k}">${v}</option>`).join("")}</select></div>
+     <div class="field"><label class="note" for="vti">Subject</label><input id="vti" required placeholder="e.g. Prior auth for orthotics"></div>`}
+     <div class="field"><label class="note" for="vbody">Your ${l?"reply":"letter"} (250 words max)</label><textarea id="vbody" rows="5" required></textarea><div class="note" id="vwc">0 / 250 words</div></div>
+     <div class="rules"><b>Before it goes up</b><br>Ann reads every post. Use your real name and credentials. Keep it non-promotional and disclose any ties to a product or company you mention. No patient details.</div>
+     <label style="display:flex;gap:8px;align-items:flex-start;font-size:13px"><input type="checkbox" id="vcoi" required style="margin-top:3px">I have disclosed any conflicts of interest.</label>
+     <button class="btn primary" type="submit">Send to Ann for review</button>
+   </form>`;
+  document.getElementById("sheet").hidden=false;
+  document.getElementById(l?"vbody":"vti").focus();
+}
+document.addEventListener("input",e=>{if(e.target.id==="vbody"){const n=(e.target.value.trim().match(/\S+/g)||[]).length,c=document.getElementById("vwc");c.textContent=`${n} / 250 words`;c.style.color=n>250?"var(--mag,#D40258)":""}});
+document.addEventListener("submit",e=>{if(e.target.id!=="vform")return;e.preventDefault();
+  const n=(document.getElementById("vbody").value.trim().match(/\S+/g)||[]).length;if(n>250){toast("Please keep it to 250 words");return}
+  VPENDING.push({reply:e.target.dataset.reply||null,at:Date.now()});store.set("pm_vpending",VPENDING);closeSheet();state.tab="voices";render();toast("Sent. Ann will review it before it goes up.")});
+document.addEventListener("click",e=>{const t=e.target.closest("[data-vopen],[data-vwrite],[data-vtopic],[data-vvote]");if(!t)return;
+  if(document.body.classList.contains("show-slots")&&t.closest(".slot"))return;
+  if(t.dataset.vopen)openLetter(t.dataset.vopen);
+  else if(t.dataset.vwrite!=null)openVWrite(Number(t.dataset.vwrite));
+  else if(t.dataset.vtopic){state.vt=t.dataset.vtopic;render()}
+  else if(t.dataset.vvote!=null&&VQ.voted==null){VQ.voted=Number(t.dataset.vvote);store.set("pm_vq",VQ);render()}});
 if(!V[state.tab]||["saved","learn","tips","reviews"].includes(state.tab))state.tab="meetings";
 document.addEventListener("change",e=>{if(e.target.name!=="tier")return;const p=document.getElementById("prem");if(p)p.disabled=e.target.value!=="feat"});
 
@@ -704,7 +794,7 @@ document.addEventListener("submit",e=>{
 const fmt=n=>(n<0?"−":"")+"$"+Math.abs(Number(n)).toLocaleString("en-US",{maximumFractionDigits:0});
 const pad=n=>String(n).padStart(2,"0");
 const isoToday=`${today.getFullYear()}-${pad(today.getMonth()+1)}-${pad(today.getDate())}`;
-const DEF_PRICES={v:2,
+const DEF_PRICES={v:3,
  job:{hiFee:99,days:{free:30,hi:60},freeLines:6,freePhotos:0,hiPhotos:1,line:3,photo:10},
  gear:{hiFee:49,days:{free:30,hi:60},freeLines:6,freePhotos:1,hiPhotos:8,line:2,photo:5},
  slots:{
@@ -716,8 +806,11 @@ const DEF_PRICES={v:2,
   K:{n:"Equipment board financing partner",p:500,u:"month"},
   F:{n:"Ann's Tips sponsor",p:300,u:"month"},
   D:{n:"Present a live webinar (Practice Partner Academy)",p:1500,u:"webinar"},
-  R:{n:"Pre-roll on webinar recordings",p:250,u:"month"}}};
-let PRICES=(()=>{const s=store.get("pm_prices",null);return s&&s.v===2?s:JSON.parse(JSON.stringify(DEF_PRICES))})();
+  R:{n:"Pre-roll on webinar recordings",p:250,u:"month"},
+  V:{n:"Voices presented-by banner",p:600,u:"month"},
+  W:{n:"Ad between Voices letters",p:350,u:"month"},
+  Q:{n:"Weekly Quick Poll sponsor",p:200,u:"week"}}};
+let PRICES=(()=>{const s=store.get("pm_prices",null);return s&&s.v===3?s:JSON.parse(JSON.stringify(DEF_PRICES))})();
 const DUR=[[1,0],[3,.10],[6,.15],[12,.20]];
 let ORDERS=store.get("pm_orders2",null)||[
  {id:"PM-1038",date:"2026-09-14",buyer:"StrideWell Orthotics (sample)",type:"Banner",item:"Meeting Calendar presented-by banner · 3 months",amt:2025,st:"Active"},
