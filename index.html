@@ -600,22 +600,22 @@ V.voices=function(){
       return `<button class="pollbar" data-vvote="${i}">${VQ.voted!=null?`<i style="width:${pct}%"></i>`:""}<span><span>${VQ.voted===i?"✓ ":""}${esc(o)}</span>${VQ.voted!=null?`<b>${pct}%</b>`:""}</span></button>`}).join("")}</div>
     <div class="note">${VQ.voted!=null?`${total} DPMs answered. Results go out in Friday's digest.`:"One tap. Results show right after you vote."} ${esc(VPOLL.last)}</div></div>`;
   const rows=[];list.forEach((l,i)=>{rows.push(`<button class="letter" data-vopen="${l.id}"><div class="re">RE: ${esc(VTOPICS[l.top])}</div><div class="lt">${esc(l.t)}</div><div class="ex">${esc(l.body)}</div>
-    <div class="badges"><span class="badge vet">✓ Reviewed by Ann</span><span class="badge">${esc(l.by)} · ${esc(l.loc)}</span><span class="badge">${l.replies.length} ${l.replies.length===1?"reply":"replies"}</span><span class="badge intl">${l.d}d ago</span></div></button>`);
+    <div class="badges"><span class="badge vet">In this week's issue</span><span class="badge">${esc(l.by)} · ${esc(l.loc)}</span><span class="badge">${l.replies.length} ${l.replies.length===1?"reply":"replies"}</span><span class="badge intl">${l.d}d ago</span></div></button>`);
     if(i===1)rows.push(sponsorCard("Slot W · Ad between letters","Sponsored · sample","Your message in the conversation","Seen by DPMs while they read what their colleagues think.","Learn more"))});
   return `${slot("Slot V · Voices presented-by banner",`<div class="presented"><div class="logo-ph">LOGO</div><div>Voices <b>presented by</b> your partner here</div></div>`)}
-   <div class="board-head"><div><h2>Voices</h2><div class="note" style="margin-top:2px">Letters and replies from DPMs. Ann reads every one before it goes up.</div></div>
+   <div class="board-head"><div><h2>Voices</h2><div class="note" style="margin-top:2px">This week's letters from DPMs: a range of views, picked by Ann for the issue.</div></div>
      <button class="newbtn" data-vwrite="0">Write a letter</button></div>
-   ${VPENDING.length?`<div class="note" style="background:var(--bg);border-radius:10px;padding:8px 10px">⏳ ${VPENDING.length} of your posts waiting for Ann's review.</div>`:""}
+   ${VPENDING.length?`<div class="note" style="background:var(--bg);border-radius:10px;padding:8px 10px">⏳ ${VPENDING.length} of your posts submitted for the next issue.</div>`:""}
    ${slot("Slot Q · Quick Poll sponsor",poll)}
    <div class="chips" role="group" aria-label="Topic">${Object.entries(VTOPICS).map(([k,v])=>`<button class="chip" data-vtopic="${k}" aria-pressed="${state.vt===k}">${v}</button>`).join("")}</div>
    <div class="list">${rows.join("")||'<div class="empty">No letters on this topic yet. Be the first to write one.</div>'}</div>
-   <div class="note">Sample letters for the prototype. Names and posts are not real.</div>`;
+   <div class="note">Every view is welcome. Not every letter can run: space is limited, so Ann picks a range each week. Sample letters for the prototype; names and posts are not real.</div>`;
 };
 function openLetter(id){
   const l=LETTERS.find(x=>x.id==id);
   document.getElementById("sheetInner").innerHTML=`
    <div class="sheet-head"><div><h3>RE: ${esc(VTOPICS[l.top])}</h3><h2 style="margin-top:4px">${esc(l.t)}</h2></div><button class="close" data-close aria-label="Close">✕</button></div>
-   <div class="note">${esc(l.by)} · ${esc(l.loc)} · ${l.d}d ago · <span class="badge vet">✓ Reviewed by Ann</span></div>
+   <div class="note">${esc(l.by)} · ${esc(l.loc)} · ${l.d}d ago · <span class="badge vet">In this week's issue</span></div>
    <p style="margin:0;line-height:1.55">${esc(l.body)}</p>
    <h3 style="margin-top:4px">${l.replies.length?`Replies (${l.replies.length})`:"No replies yet"}</h3>
    ${l.replies.map(([w,t])=>`<div class="reply"><b style="font-size:13px">${esc(w)}</b><span style="font-size:14px;line-height:1.5">${esc(t)}</span></div>`).join("")}
@@ -630,9 +630,9 @@ function openVWrite(id){
      ${l?"":`<div class="field"><label class="note" for="vtop">Topic</label><select id="vtop">${Object.entries(VTOPICS).filter(([k])=>k!=="all").map(([k,v])=>`<option value="${k}">${v}</option>`).join("")}</select></div>
      <div class="field"><label class="note" for="vti">Subject</label><input id="vti" required placeholder="e.g. Prior auth for orthotics"></div>`}
      <div class="field"><label class="note" for="vbody">Your ${l?"reply":"letter"} (250 words max)</label><textarea id="vbody" rows="5" required></textarea><div class="note" id="vwc">0 / 250 words</div></div>
-     <div class="rules"><b>Before it goes up</b><br>Ann reads every post. Use your real name and credentials. Keep it non-promotional and disclose any ties to a product or company you mention. No patient details.</div>
+     <div class="rules"><b>How letters are picked</b><br>We get more letters than we can run, so each week Ann picks a mix of views, including ones she doesn't share. Picked for variety, not agreement. If yours doesn't run you'll hear back, and you can always message Ann directly.<br><br>Use your real name and credentials, disclose any ties to a product you mention, and leave out patient details.</div>
      <label style="display:flex;gap:8px;align-items:flex-start;font-size:13px"><input type="checkbox" id="vcoi" required style="margin-top:3px">I have disclosed any conflicts of interest.</label>
-     <button class="btn primary" type="submit">Send to Ann for review</button>
+     <button class="btn primary" type="submit">Submit for the next issue</button>
    </form>`;
   document.getElementById("sheet").hidden=false;
   document.getElementById(l?"vbody":"vti").focus();
@@ -640,7 +640,7 @@ function openVWrite(id){
 document.addEventListener("input",e=>{if(e.target.id==="vbody"){const n=(e.target.value.trim().match(/\S+/g)||[]).length,c=document.getElementById("vwc");c.textContent=`${n} / 250 words`;c.style.color=n>250?"var(--mag,#D40258)":""}});
 document.addEventListener("submit",e=>{if(e.target.id!=="vform")return;e.preventDefault();
   const n=(document.getElementById("vbody").value.trim().match(/\S+/g)||[]).length;if(n>250){toast("Please keep it to 250 words");return}
-  VPENDING.push({reply:e.target.dataset.reply||null,at:Date.now()});store.set("pm_vpending",VPENDING);closeSheet();state.tab="voices";render();toast("Sent. Ann will review it before it goes up.")});
+  VPENDING.push({reply:e.target.dataset.reply||null,at:Date.now()});store.set("pm_vpending",VPENDING);closeSheet();state.tab="voices";render();toast("Thanks! Submitted for the next issue. You'll hear back either way.")});
 document.addEventListener("click",e=>{const t=e.target.closest("[data-vopen],[data-vwrite],[data-vtopic],[data-vvote]");if(!t)return;
   if(document.body.classList.contains("show-slots")&&t.closest(".slot"))return;
   if(t.dataset.vopen)openLetter(t.dataset.vopen);
